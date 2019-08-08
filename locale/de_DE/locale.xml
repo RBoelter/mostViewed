@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE locale SYSTEM "../../../../../lib/pkp/dtd/locale.dtd">
+<locale name="de_DE" full_name="Deutsch">
+    <message key="plugins.generic.most.viewed.title">Beliebteste Artikel</message>
+    <message key="plugins.generic.most.viewed.desc">Zeigt die Top 5 der meistgesehenen und heruntergeladenen Artikel auf der Indexseite der Zeitschrift an.</message>
+    <message key="plugins.generic.most.viewed.headline">Top 5 der meistgesehenen und heruntergeladenen Artikel (30 Tage)</message>
+</locale>
