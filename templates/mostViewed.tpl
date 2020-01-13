@@ -1,4 +1,4 @@
-<div class="card mb-3 default-card-layout">
+<div class="card mb-3 default-card-layout most-viewed">
     <div class="card-body">
         <div class="card-title">
             <h2>{translate key="plugins.generic.most.viewed.headline"}</h2>
