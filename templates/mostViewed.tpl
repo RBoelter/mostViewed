@@ -13,9 +13,9 @@
                             {$article['articleTitle']|strip_unsafe_html}
                         </a>
                         {if $article['articleSubtitle']}
-                            <span class="text-muted font-weight-light font-italic">{$article['articleSubtitle']|strip_unsafe_html}</span>
+                            <div>{$article['articleSubtitle']|strip_unsafe_html}</div>
                         {/if}
-                        <div>{$article['articleAuthor']|strip_unsafe_html}</div>
+                        <div class="font-italic">{$article['articleAuthor']|strip_unsafe_html}</div>
                     </div>
                     <div class="col-auto">
                         <span class="badge"><i class="fa fa-eye"
