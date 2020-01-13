@@ -12,10 +12,14 @@
                         <a href={url page="article" op="view" path=$article['articleId']}>
                             {$article['articleTitle']|strip_unsafe_html}
                         </a>
-                        {$article['articleAuthor']|strip_unsafe_html}
+                        {if $article['articleSubtitle']}
+                            <span class="text-muted font-weight-light font-italic">{$article['articleSubtitle']|strip_unsafe_html}</span>
+                        {/if}
+                        <div>{$article['articleAuthor']|strip_unsafe_html}</div>
                     </div>
                     <div class="col-auto">
-                        <span class="badge"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;{$article['metric']|strip_unsafe_html}</span>
+                        <span class="badge"><i class="fa fa-eye"
+                                               aria-hidden="true"></i>&nbsp;{$article['metric']|strip_unsafe_html}</span>
                     </div>
                 </div>
             </li>

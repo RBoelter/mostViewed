@@ -56,7 +56,8 @@ class MostViewedPlugin extends GenericPlugin
                 $journal = $journalDao->getById($article->getJournalId());
                 $articles[$submissionId]['journalPath'] = $journal->getPath();
                 $articles[$submissionId]['articleId'] = $article->getBestArticleId();
-                $articles[$submissionId]['articleTitle'] = $article->getLocalizedTitle();
+                $articles[$submissionId]['articleTitle'] = $article->getLocalizedTitle($article->getLocale());
+                $articles[$submissionId]['articleSubtitle'] = $article->getLocalizedSubtitle($article->getLocale());
                 $articles[$submissionId]['articleAuthor'] = $article->getAuthorString();
                 $articles[$submissionId]['metric'] = $resultRecord[STATISTICS_METRIC];
                 if (++$cc >= $range)
