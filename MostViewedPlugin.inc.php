@@ -6,6 +6,7 @@ class MostViewedPlugin extends GenericPlugin
 	public function register($category, $path, $mainContextId = NULL)
 	{
 		$success = parent::register($category, $path);
+		HookRegistry::register('AcronPlugin::parseCronTab', array($this, 'callbackParseCronTab'));
 		if ($success && $this->getEnabled()) {
 			HookRegistry::register('Templates::Index::journal', array($this, 'mostViewedContent'));
 		}
@@ -71,6 +72,7 @@ class MostViewedPlugin extends GenericPlugin
 					break;
 			}
 		}
+		var_dump($this->getName());
 		return $articles;
 	}
 
@@ -82,5 +84,21 @@ class MostViewedPlugin extends GenericPlugin
 	public function getDescription()
 	{
 		return __('plugins.generic.most.viewed.desc');
+	}
+
+	/**
+	 * @see AcronPlugin::parseCronTab()
+	 * @param $hookName string
+	 * @param $args array [
+	 *  @option array Task files paths
+	 * ]
+	 * @return boolean
+	 */
+	function callbackParseCronTab($hookName, $args) {
+		if ($this->getEnabled() || !Config::getVar('general', 'installed')) {
+			$taskFilesPath =& $args[0]; // Reference needed.
+			$taskFilesPath[] = $this->getPluginPath() . DIRECTORY_SEPARATOR . 'scheduledTasksAutoStage.xml';
+		}
+		return false;
 	}
 }
