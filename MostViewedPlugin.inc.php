@@ -1,5 +1,6 @@
 <?php
 import('lib.pkp.classes.plugins.GenericPlugin');
+import('plugins.generic.mostViewed.MostViewedHandler');
 
 class MostViewedPlugin extends GenericPlugin
 {
@@ -13,67 +14,15 @@ class MostViewedPlugin extends GenericPlugin
 		return $success;
 	}
 
-
 	public function mostViewedContent($hookName, $args)
 	{
-		/* TODO YEARS and RANGE in Plugin-Settings!!!! */
 		$smarty =& $args[1];
 		$output =& $args[2];
-		$time = new DateTime('now');
-		$new_time = $time->modify('-5 year')->format('Y');
-		$date = new Datetime();
 		$contextId = Application::getRequest()->getContext()->getId();
-		if ($this->getSetting($contextId, 'datetime') == $date->format("Y-m-d")) {
-			$articles = json_decode($this->getSetting($contextId, 'articles'), true);
-		} else {
-			$articles = $this->getMetricsFromDB(30, 5, $new_time);
-			$this->updateSetting($contextId, 'articles', json_encode($articles));
-			$this->updateSetting($contextId, 'datetime', $date->format("Y-m-d"));
-		}
+		$articles = json_decode($this->getSetting($contextId, 'articles'), true);
 		$smarty->assign('mostReadArticles', $articles);
+		/*$handler = new MostViewedHandler();*/
 		$output .= $smarty->fetch($this->getTemplateResource('mostViewed.tpl'));
-	}
-
-	function getMetricsFromDB($mostReadDays = 30, $range = 5, $date = null)
-	{
-		$context = Application::getRequest()->getContext();
-		$publishedArticleDao = DAORegistry::getDAO('PublishedArticleDAO');
-		$journalDao = DAORegistry::getDAO('JournalDAO');
-		$dayString = "-" . $mostReadDays . " days";
-		$daysAgo = date('Ymd', strtotime($dayString));
-		$currentDate = date('Ymd');
-		$filter = array(
-			STATISTICS_DIMENSION_CONTEXT_ID => $context->getId(),
-		);
-		$filter[STATISTICS_DIMENSION_DAY]['from'] = $daysAgo;
-		$filter[STATISTICS_DIMENSION_DAY]['to'] = $currentDate;
-		$orderBy = array(STATISTICS_METRIC => STATISTICS_ORDER_DESC);
-		$column = array(STATISTICS_DIMENSION_SUBMISSION_ID);
-		import('lib.pkp.classes.db.DBResultRange');
-		$dbResultRange = new DBResultRange($date ? null : $range + 1);
-		$metricsDao =& DAORegistry::getDAO('MetricsDAO');
-		$result = $metricsDao->getMetrics(OJS_METRIC_TYPE_COUNTER, $column, $filter, $orderBy, $dbResultRange);
-		$articles = array();
-		$cc = 0;
-		foreach ($result as $resultRecord) {
-			$submissionId = $resultRecord[STATISTICS_DIMENSION_SUBMISSION_ID];
-			$article = $publishedArticleDao->getById($submissionId);
-			if ($article) {
-				if ($date && $article->getDatePublished() < $date)
-					continue;
-				$journal = $journalDao->getById($article->getJournalId());
-				$articles[$submissionId]['journalPath'] = $journal->getPath();
-				$articles[$submissionId]['articleId'] = $article->getBestArticleId();
-				$articles[$submissionId]['articleTitle'] = $article->getLocalizedTitle($article->getLocale());
-				$articles[$submissionId]['articleSubtitle'] = $article->getLocalizedSubtitle($article->getLocale());
-				$articles[$submissionId]['articleAuthor'] = $article->getAuthorString();
-				$articles[$submissionId]['metric'] = $resultRecord[STATISTICS_METRIC];
-				if (++$cc >= $range)
-					break;
-			}
-		}
-		var_dump($this->getName());
-		return $articles;
 	}
 
 	public function getDisplayName()
@@ -84,21 +33,5 @@ class MostViewedPlugin extends GenericPlugin
 	public function getDescription()
 	{
 		return __('plugins.generic.most.viewed.desc');
-	}
-
-	/**
-	 * @see AcronPlugin::parseCronTab()
-	 * @param $hookName string
-	 * @param $args array [
-	 *  @option array Task files paths
-	 * ]
-	 * @return boolean
-	 */
-	function callbackParseCronTab($hookName, $args) {
-		if ($this->getEnabled() || !Config::getVar('general', 'installed')) {
-			$taskFilesPath =& $args[0]; // Reference needed.
-			$taskFilesPath[] = $this->getPluginPath() . DIRECTORY_SEPARATOR . 'scheduledTasksAutoStage.xml';
-		}
-		return false;
 	}
 }
