@@ -25,14 +25,24 @@ class MostViewedHandler extends ScheduledTask
 		}
 		$contextDao = Application::getApplication()->getContextDAO();
 		for ($contexts = $contextDao->getAll(true); $context = $contexts->next();) {
-			/* TODO Plugin Settings for each journal*/
+			// Default Settings for each Journal
 			$mostReadDays = 30;
-			$range = 5;
-			$dateTime = new DateTime('now');
-			$maxYearsBack = $dateTime->modify('-5 year')->format('Y');
-
-
-			$this->saveMetricsToPluginSettings($plugin, $context->getId(), $mostReadDays, $range, $maxYearsBack);
+			$amount = 5;
+			$maxYearsBack = 5;
+			// Overwrite Settings if Journal has Settings
+			$settings = $this->getSetting($context->getId(), 'settings');
+			if ($settings) {
+				$settings = json_decode($settings, true);
+				if (intval($settings['days']) > 0)
+					$mostReadDays = intval($settings['days']);
+				if (intval($settings['amount']) > 0)
+					$amount = intval($settings['amount']);
+				if (intval($settings['years']) > 0)
+					$maxYearsBack = intval($settings['years']);
+				else
+					$maxYearsBack = null;
+			}
+			$this->saveMetricsToPluginSettings($plugin, $context->getId(), $mostReadDays, $amount, $maxYearsBack);
 		}
 		return true;
 	}
@@ -47,6 +57,10 @@ class MostViewedHandler extends ScheduledTask
 	 */
 	public function saveMetricsToPluginSettings($plugin, $contextId, $mostReadDays = 30, $range = 5, $date = null)
 	{
+		if ($date != null && intval($date) > 0) {
+			$dateTime = new DateTime('now');
+			$date = $dateTime->modify('-' . $date . ' year')->format('Y');
+		}
 		$publishedArticleDao = DAORegistry::getDAO('PublishedArticleDAO');
 		$journalDao = DAORegistry::getDAO('JournalDAO');
 		$dayString = "-" . $mostReadDays . " days";
@@ -82,8 +96,6 @@ class MostViewedHandler extends ScheduledTask
 					break;
 			}
 		}
-		$dateTime = new Datetime();
 		$plugin->updateSetting($contextId, 'articles', json_encode($articles));
-		$plugin->updateSetting($contextId, 'datetime', $dateTime->format("Y-m-d"));
 	}
 }

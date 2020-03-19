@@ -1,6 +1,6 @@
 {if $mostReadArticles && sizeof($mostReadArticles)>0}
 	<div class="most-viewed">
-		<h2 class="most-viewed-headline">{translate key="plugins.generic.most.viewed.headline"}</h2>
+		<h2 class="most-viewed-headline">{if $mostReadHeadline}{$mostReadHeadline}{else}{translate key="plugins.generic.most.viewed.headline"}{/if}</h2>
         {foreach from=$mostReadArticles item="article"}
 			<div class="most-viewed-content">
 				<div>
@@ -28,7 +28,7 @@
 		}
 
 		.most-viewed-content:not(:last-child) {
-			border-bottom: 1px solid rgba(0,0,0,.125);
+			border-bottom: 1px solid rgba(0, 0, 0, .125);
 			margin-bottom: 5px;
 		}
 
