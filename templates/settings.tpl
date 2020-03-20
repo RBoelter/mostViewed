@@ -27,6 +27,9 @@
         {fbvFormSection title="plugins.generic.most.viewed.years"}
             {fbvElement type="text" id="mostViewedYears" class="checkNum" value=$mostViewedYears label="plugins.generic.most.viewed.years.desc"}
         {/fbvFormSection}
+	    {fbvFormSection label="plugins.generic.most.viewed.position" list=true description="plugins.generic.most.viewed.position.desc"}
+            {fbvElement type="checkbox" id="mostViewedPosition" value="1" checked=$mostViewedPosition label="plugins.generic.most.viewed.position.check"}
+	    {/fbvFormSection}
     {/fbvFormArea}
     {fbvFormButtons submitText="common.save"}
 </form>

@@ -27,13 +27,14 @@ class MostViewedSettingsForm extends Form
 			$this->setData('mostViewedDays', $data['days']);
 			$this->setData('mostViewedAmount', $data['amount']);
 			$this->setData('mostViewedYears', $data['years']);
+			$this->setData('mostViewedPosition', $data['position']);
 		}
 		parent::initData();
 	}
 
 	public function readInputData()
 	{
-		$this->readUserVars(['mostViewedTitle', 'mostViewedDays', 'mostViewedAmount', 'mostViewedYears']);
+		$this->readUserVars(['mostViewedTitle', 'mostViewedDays', 'mostViewedAmount', 'mostViewedYears', 'mostViewedPosition']);
 		parent::readInputData();
 	}
 
@@ -51,7 +52,8 @@ class MostViewedSettingsForm extends Form
 			"title" => $this->getData('mostViewedTitle'),
 			"days" => $this->getData('mostViewedDays'),
 			"amount" => $this->getData('mostViewedAmount'),
-			"years" => $this->getData('mostViewedYears')
+			"years" => $this->getData('mostViewedYears'),
+			"position" => $this->getData('mostViewedPosition')
 		];
 		$this->plugin->updateSetting($contextId, 'settings', json_encode($data));
 		import('plugins.generic.mostViewed.MostViewedHandler');

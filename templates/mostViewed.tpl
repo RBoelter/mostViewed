@@ -19,23 +19,38 @@
 				</div>
 			</div>
         {/foreach}
+		<style>
+			.most-viewed-content {
+				min-width: 100%;
+				display: grid;
+				grid-template-columns: 1fr fit-content(250px);
+			}
+
+			.most-viewed-content:not(:last-child) {
+				border-bottom: 1px solid rgba(0, 0, 0, .125);
+				margin-bottom: 5px;
+			}
+
+			.most-viewed-content > div:first-child {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			{if $mostReadPosition}
+			.most-viewed {
+				display: none;
+			}
+			{/if}
+		</style>
+        {if $mostReadPosition}
+			<script>
+				document.addEventListener("DOMContentLoaded", function () {
+					let mv_div = document.querySelector('.most-viewed');
+					mv_div.parentElement.append(mv_div);
+					mv_div.style.display = 'block';
+				});
+			</script>
+        {/if}
 	</div>
-	<style>
-		.most-viewed-content {
-			min-width: 100%;
-			display: grid;
-			grid-template-columns: 1fr fit-content(250px);
-		}
-
-		.most-viewed-content:not(:last-child) {
-			border-bottom: 1px solid rgba(0, 0, 0, .125);
-			margin-bottom: 5px;
-		}
-
-		.most-viewed-content > div:first-child {
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
-	</style>
 {/if}

@@ -20,8 +20,12 @@ class MostViewedPlugin extends GenericPlugin
 		$contextId = Application::getRequest()->getContext()->getId();
 		$smarty->assign('mostReadArticles', json_decode($this->getSetting($contextId, 'articles'), true));
 		$settings = json_decode($this->getSetting($contextId, 'settings'), true);
-		if ($settings && $settings['title'])
-			$smarty->assign('mostReadHeadline', $settings['title']);
+		if ($settings) {
+			if ($settings['title'])
+				$smarty->assign('mostReadHeadline', $settings['title']);
+			if ($settings['position'])
+				$smarty->assign('mostReadPosition', $settings['position']);
+		}
 		$output .= $smarty->fetch($this->getTemplateResource('mostViewed.tpl'));
 	}
 
