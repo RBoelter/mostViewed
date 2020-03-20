@@ -4,7 +4,7 @@
     <application>mostViewed</application>
     <type>plugins.generic</type>
     <release>1.0.0.0</release>
-    <date>2019-06-14</date>
+    <date>2020-03-20</date>
     <lazy-load>1</lazy-load>
     <class>MostViewedPlugin</class>
 </version>

@@ -1,6 +1,5 @@
 <?php
 
-
 import('lib.pkp.classes.scheduledTask.ScheduledTask');
 
 class MostViewedHandler extends ScheduledTask
@@ -30,7 +29,7 @@ class MostViewedHandler extends ScheduledTask
 			$amount = 5;
 			$maxYearsBack = 5;
 			// Overwrite Settings if Journal has Settings
-			$settings = $this->getSetting($context->getId(), 'settings');
+			$settings = $plugin->getSetting($context->getId(), 'settings');
 			if ($settings) {
 				$settings = json_decode($settings, true);
 				if (intval($settings['days']) > 0)

@@ -3,5 +3,14 @@
 <locale name="de_DE" full_name="Deutsch">
     <message key="plugins.generic.most.viewed.title">Beliebteste Artikel</message>
     <message key="plugins.generic.most.viewed.desc">Zeigt die Top 5 der meistgesehenen und heruntergeladenen Artikel auf der Indexseite der Zeitschrift an.</message>
-    <message key="plugins.generic.most.viewed.headline">Top 5 der meistgesehenen und heruntergeladenen Artikel (30 Tage)</message>
+    <message key="plugins.generic.most.viewed.headline">Meistgesehene und heruntergeladene Artikel</message>
+
+    <message key="plugins.generic.most.viewed.head">Überschrift des "Meist gesehene Artikel" Bereiches</message>
+    <message key="plugins.generic.most.viewed.head.desc">Tragen Sie hier die Überschrift ein, die über dem Bereich der meistgesehenen und heruntergeladenen Artikel Bereich ausgegeben werden soll. Lassen Sie das Feld leer wird eine Standartüberschrift angezeigt.</message>
+    <message key="plugins.generic.most.viewed.days">Anzahl der Tage</message>
+    <message key="plugins.generic.most.viewed.days.desc">Tragen Sie hier die Anzahl der Tage für die Erfassung der Metriken ein. Wenn Sie beispielsweise 30 eingeben, dann werden nur die Metriken der letzten 30 Tage berücksichtigt, also alle Artikel die in diesem Zeitraum aufgerufen, oder heruntergeladen wurden.</message>
+    <message key="plugins.generic.most.viewed.amount">Anzahl der Ergebnisse</message>
+    <message key="plugins.generic.most.viewed.amount.desc">Tragen Sie hier ein wie viele Artikel Sie maximal anzeigen wollen.</message>
+    <message key="plugins.generic.most.viewed.years">(Optional) Anzahl der maximal zu erfassenen Jahre</message>
+    <message key="plugins.generic.most.viewed.years.desc">Wenn Sie verhindern möchten, dass eventuell zehr alte Artikel angezeigt werden können Sie mit dieser Einstellung die Anzahl der Jahre eingrenzen, die erfasst werden. Wenn Sie z.B. hier „2“ eintragen, dann werden nur die meistgesehenen Artikel der letzten 2 Jahre erfasst. Diese Einstellung ist optional.</message>
 </locale>
