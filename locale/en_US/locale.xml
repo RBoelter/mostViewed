@@ -4,4 +4,15 @@
     <message key="plugins.generic.most.viewed.title">Most Viewed Articles</message>
     <message key="plugins.generic.most.viewed.desc">Shows the Top 5 most-viewed and downloaded articles on the journal's index page</message>
     <message key="plugins.generic.most.viewed.headline">Top 5 most-viewed and downloaded articles (30 days)</message>
+    <message key="plugins.generic.most.viewed.head">Headline of the "Most viewed articles" section</message>
+    <message key="plugins.generic.most.viewed.head.desc">Enter here the heading that should be displayed above the most viewed and downloaded articles section. If you leave the field blank, a standard heading will be displayed.</message>
+    <message key="plugins.generic.most.viewed.days">Number of days</message>
+    <message key="plugins.generic.most.viewed.days.desc">Enter the number of days for the metrics to be collected. For example, if you enter 30, then only the metrics of the last 30 days will be taken into consideration, i.e. all articles that were accessed or downloaded during this period.</message>
+    <message key="plugins.generic.most.viewed.amount">Total number of results</message>
+    <message key="plugins.generic.most.viewed.amount.desc">Enter the maximum number of results you want to display.</message>
+    <message key="plugins.generic.most.viewed.years">(Optional) Maximum years to be covered</message>
+    <message key="plugins.generic.most.viewed.years.desc">If you want to prevent that very old articles are displayed, you can limit the number of years. For example, if you enter "2" here, then only the most viewed articles of the last 2 years are captured. This setting is optional.</message>
+    <message key="plugins.generic.most.viewed.position">Display below current issue</message>
+    <message key="plugins.generic.most.viewed.position.desc">By default, the most viewed articles are displayed above the current issue on the Journal Index page. To change this, a JavaScript workaround has been implemented, which embeds the plugin output below the current issue. This workaround only works if no HTML elements have been built around the hook in your theme. Please test if these settings work for you and the plugin output is moved to the bottom.</message>
+    <message key="plugins.generic.most.viewed.position.check">Move plugin output to bottom.</message>
 </locale>

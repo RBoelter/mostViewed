@@ -3,77 +3,79 @@ import('lib.pkp.classes.plugins.GenericPlugin');
 
 class MostViewedPlugin extends GenericPlugin
 {
-    public function register($category, $path, $mainContextId = NULL)
-    {
-        $success = parent::register($category, $path);
-        if ($success && $this->getEnabled()) {
-            HookRegistry::register('Plugin::Most:Viewed', array($this, 'mostViewedContent'));
-        }
-        return $success;
-    }
+	public function register($category, $path, $mainContextId = NULL)
+	{
+		$success = parent::register($category, $path);
+		HookRegistry::register('AcronPlugin::parseCronTab', array($this, 'callbackParseCronTab'));
+		if ($success && $this->getEnabled()) {
+			HookRegistry::register('Templates::Index::journal', array($this, 'mostViewedContent'));
+		}
+		return $success;
+	}
+
+	public function mostViewedContent($hookName, $args)
+	{
+		$smarty =& $args[1];
+		$output =& $args[2];
+		$contextId = Application::getRequest()->getContext()->getId();
+		$smarty->assign('mostReadArticles', json_decode($this->getSetting($contextId, 'articles'), true));
+		$settings = json_decode($this->getSetting($contextId, 'settings'), true);
+		if ($settings) {
+			if ($settings['title'])
+				$smarty->assign('mostReadHeadline', $settings['title']);
+			if ($settings['position'])
+				$smarty->assign('mostReadPosition', $settings['position']);
+		}
+		$output .= $smarty->fetch($this->getTemplateResource('mostViewed.tpl'));
+	}
+
+	public function getDisplayName()
+	{
+		return __('plugins.generic.most.viewed.title');
+	}
+
+	public function getDescription()
+	{
+		return __('plugins.generic.most.viewed.desc');
+	}
 
 
-    public function mostViewedContent($hookName, $args)
-    {
-        /* TODO YEARS and RANGE in Plugin-Settings!!!! */
-        $smarty =& $args[1];
-        $output =& $args[2];
-        $time = new DateTime('now');
-        $new_time = $time->modify('-5 year')->format('Y');
-        $articles = $this->getFileStats(30, 5, $new_time);
-        $smarty->assign('mostReadArticles', $articles);
-        $output .= $smarty->fetch($this->getTemplateResource('mostViewed.tpl'));
-    }
+	public function getActions($request, $verb)
+	{
+		$router = $request->getRouter();
+		import('lib.pkp.classes.linkAction.request.AjaxModal');
+		return array_merge(
+			$this->getEnabled() ? array(
+				new LinkAction(
+					'settings',
+					new AjaxModal(
+						$router->url($request, null, null, 'manage', null, array('verb' => 'settings', 'plugin' => $this->getName(), 'category' => 'generic')),
+						$this->getDisplayName()
+					),
+					__('manager.plugins.settings'),
+					null
+				),
+			) : array(),
+			parent::getActions($request, $verb)
+		);
+	}
 
-    function getFileStats($mostReadDays = 30, $range = 5, $date = null)
-    {
-        $context = Application::getRequest()->getContext();
-        $publishedArticleDao = DAORegistry::getDAO('PublishedArticleDAO');
-        $journalDao = DAORegistry::getDAO('JournalDAO');
-        $dayString = "-" . $mostReadDays . " days";
-        $daysAgo = date('Ymd', strtotime($dayString));
-        $currentDate = date('Ymd');
-        $filter = array(
-            STATISTICS_DIMENSION_CONTEXT_ID => $context->getId(),
-        );
-        $filter[STATISTICS_DIMENSION_DAY]['from'] = $daysAgo;
-        $filter[STATISTICS_DIMENSION_DAY]['to'] = $currentDate;
-        $orderBy = array(STATISTICS_METRIC => STATISTICS_ORDER_DESC);
-        $column = array(STATISTICS_DIMENSION_SUBMISSION_ID);
-        import('lib.pkp.classes.db.DBResultRange');
-        $dbResultRange = new DBResultRange($date ? null : $range + 1);
-        $metricsDao =& DAORegistry::getDAO('MetricsDAO');
-        $result = $metricsDao->getMetrics(OJS_METRIC_TYPE_COUNTER, $column, $filter, $orderBy, $dbResultRange);
-        $articles = array();
-        $cc = 0;
-        foreach ($result as $resultRecord) {
-            $submissionId = $resultRecord[STATISTICS_DIMENSION_SUBMISSION_ID];
-            $article = $publishedArticleDao->getById($submissionId);
-            if ($article) {
-                if ($date && $article->getDatePublished() < $date) {
-                    continue;
-                }
-                $journal = $journalDao->getById($article->getJournalId());
-                $articles[$submissionId]['journalPath'] = $journal->getPath();
-                $articles[$submissionId]['articleId'] = $article->getBestArticleId();
-                $articles[$submissionId]['articleTitle'] = $article->getLocalizedTitle($article->getLocale());
-                $articles[$submissionId]['articleSubtitle'] = $article->getLocalizedSubtitle($article->getLocale());
-                $articles[$submissionId]['articleAuthor'] = $article->getAuthorString();
-                $articles[$submissionId]['metric'] = $resultRecord[STATISTICS_METRIC];
-                if (++$cc >= $range)
-                    break;
-            }
-        }
-        return $articles;
-    }
-
-    public function getDisplayName()
-    {
-        return __('plugins.generic.most.viewed.title');
-    }
-
-    public function getDescription()
-    {
-        return __('plugins.generic.most.viewed.desc');
-    }
+	public function manage($args, $request)
+	{
+		switch ($request->getUserVar('verb')) {
+			case 'settings':
+				$this->import('MostViewedSettingsForm');
+				$form = new MostViewedSettingsForm($this);
+				if (!$request->getUserVar('save')) {
+					$form->initData();
+					return new JSONMessage(true, $form->fetch($request));
+				}
+				$form->readInputData();
+				if ($form->validate()) {
+					$form->execute();
+					return new JSONMessage(true);
+				}
+		}
+		return parent::manage($args, $request);
+	}
 }
