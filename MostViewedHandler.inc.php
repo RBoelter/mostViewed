@@ -22,7 +22,7 @@ class MostViewedHandler extends ScheduledTask
 		$contextDao = Application::getApplication()->getContextDAO();
 		for ($contexts = $contextDao->getAll(true); $context = $contexts->next();) {
 			if (!$plugin->getEnabled($context->getId())) {
-				return false;
+				continue;
 			}
 			// Default Settings for each Journal
 			$mostReadDays = 30;

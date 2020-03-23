@@ -22,5 +22,6 @@
 <scheduled_tasks>
 	<task class="plugins.generic.mostViewed.MostViewedHandler">
 		<descr>Extract transform and load usage statistics data into plugin settings.</descr>
+		<frequency minute="0"/>
 	</task>
 </scheduled_tasks>

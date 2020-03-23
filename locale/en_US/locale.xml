@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE locale SYSTEM "../../../../../lib/pkp/dtd/locale.dtd">
 <locale name="en_US" full_name="U.S. English">
+    <message key="admin.scheduledTask.mostViewed">mostViewed</message>
     <message key="plugins.generic.most.viewed.title">Most Viewed Articles</message>
     <message key="plugins.generic.most.viewed.desc">Show the most-viewed and downloaded articles on the journal's homepage.</message>
     <message key="plugins.generic.most.viewed.headline">Most Read Articles</message>
