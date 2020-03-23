@@ -1,0 +1,30 @@
+.most-viewed-author {
+    font-size: 13px;
+    min-width: 100%;
+    display: grid;
+    grid-template-columns: 1fr fit-content(250px);
+}
+
+.most-viewed-title a {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 700;
+    text-decoration: none;
+    margin-bottom: 50px;
+}
+
+.most-viewed-content:not(:last-child) {
+    /*border-bottom: 1px solid rgba(0, 0, 0, .125);*/
+    margin-bottom: 20px;
+}
+
+.most-viewed-content .most-viewed-subtitle{
+    margin-bottom: 5px;
+}
+
+.most-viewed-author> div:first-child{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+

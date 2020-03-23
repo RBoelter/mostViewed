@@ -19,11 +19,11 @@ class MostViewedHandler extends ScheduledTask
 	public function executeActions()
 	{
 		$plugin = PluginRegistry::getPlugin('generic', 'mostviewedplugin');
-		if (!$plugin->getEnabled()) {
-			return false;
-		}
 		$contextDao = Application::getApplication()->getContextDAO();
 		for ($contexts = $contextDao->getAll(true); $context = $contexts->next();) {
+			if (!$plugin->getEnabled($context->getId())) {
+				return false;
+			}
 			// Default Settings for each Journal
 			$mostReadDays = 30;
 			$amount = 5;

@@ -1,15 +1,15 @@
 <script>
 	$(function () {ldelim}
-		$('#twitterSettings').pkpHandler('$.pkp.controllers.form.AjaxFormHandler');
+		$('#mostViewedSettings').pkpHandler('$.pkp.controllers.form.AjaxFormHandler');
         {rdelim});
 
-	document.querySelectorAll('.checkNum').forEach(function (el) {
+	document.querySelectorAll('.checkNum').forEach(function (el) {ldelim}
 		el.addEventListener("input", elem => el.value = (isNaN(el.value)) ? el.value.replace(elem.data, '') : el.value);
-	})
+        {rdelim})
 </script>
 <form
 		class="pkp_form"
-		id="twitterSettings"
+		id="mostViewedSettings"
 		method="POST"
 		action="{url router=$smarty.const.ROUTE_COMPONENT op="manage" category="generic" plugin=$pluginName verb="settings" save=true}"
 >

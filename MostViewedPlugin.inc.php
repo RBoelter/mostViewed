@@ -6,8 +6,13 @@ class MostViewedPlugin extends GenericPlugin
 	public function register($category, $path, $mainContextId = NULL)
 	{
 		$success = parent::register($category, $path);
-		HookRegistry::register('AcronPlugin::parseCronTab', array($this, 'callbackParseCronTab'));
 		if ($success && $this->getEnabled()) {
+			$request = Application::getRequest();
+			$templateMgr = TemplateManager::getManager($request);
+			$templateMgr->addStyleSheet(
+				'mostViewedArticles',
+				$request->getBaseUrl() . '/' . $this->getPluginPath() . '/css/mostViewed.css'
+			);
 			HookRegistry::register('Templates::Index::journal', array($this, 'mostViewedContent'));
 		}
 		return $success;
@@ -17,7 +22,8 @@ class MostViewedPlugin extends GenericPlugin
 	{
 		$smarty =& $args[1];
 		$output =& $args[2];
-		$contextId = Application::getRequest()->getContext()->getId();
+		$request = Application::getRequest();
+		$contextId = $request->getContext()->getId();
 		$smarty->assign('mostReadArticles', json_decode($this->getSetting($contextId, 'articles'), true));
 		$settings = json_decode($this->getSetting($contextId, 'settings'), true);
 		if ($settings) {
