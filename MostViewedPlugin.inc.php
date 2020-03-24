@@ -13,6 +13,7 @@ class MostViewedPlugin extends GenericPlugin
 				'mostViewedArticles',
 				$request->getBaseUrl() . '/' . $this->getPluginPath() . '/css/mostViewed.css'
 			);
+			HookRegistry::register('AcronPlugin::parseCronTab', array($this, 'callbackParseCronTab'));
 			HookRegistry::register('Templates::Index::journal', array($this, 'mostViewedContent'));
 		}
 		return $success;
@@ -83,5 +84,13 @@ class MostViewedPlugin extends GenericPlugin
 				}
 		}
 		return parent::manage($args, $request);
+	}
+
+	function callbackParseCronTab($hookName, $args) {
+		if ($this->getEnabled() || !Config::getVar('general', 'installed')) {
+			$taskFilesPath =& $args[0]; // Reference needed.
+			$taskFilesPath[] = $this->getPluginPath() . DIRECTORY_SEPARATOR . 'scheduledTasksAutoStage.xml';
+		}
+		return false;
 	}
 }

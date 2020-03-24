@@ -4,6 +4,9 @@ import('lib.pkp.classes.scheduledTask.ScheduledTask');
 
 class MostViewedHandler extends ScheduledTask
 {
+
+	var $_plugin;
+
 	/**
 	 * @copydoc ScheduledTask::getName()
 	 */
@@ -12,9 +15,26 @@ class MostViewedHandler extends ScheduledTask
 		return __('admin.scheduledTask.mostViewed');
 	}
 
+
+	/**
+	 * Constructor.
+	 * @param $args
+	 */
+	function __construct($args)
+	{
+		$this->_plugin = PluginRegistry::getPlugin('generic', 'mostviewedplugin');
+		parent::__construct($args);
+	}
+
+	/**
+	 * @copydoc ScheduledTask::executeActions()
+	 */
 	public function executeActions()
 	{
-		$plugin = PluginRegistry::getPlugin('generic', 'mostviewedplugin');
+		$plugin = $this->_plugin;
+		if (!$plugin->getEnabled()) {
+			return false;
+		}
 		$contextDao = Application::getApplication()->getContextDAO();
 		for ($contexts = $contextDao->getAll(true); $context = $contexts->next();) {
 			if (!$plugin->getEnabled($context->getId())) {
