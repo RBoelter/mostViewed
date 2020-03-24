@@ -3,9 +3,34 @@ import('lib.pkp.classes.plugins.GenericPlugin');
 
 class MostViewedPlugin extends GenericPlugin
 {
+	/**
+	 * @return string plugin name
+	 */
+	public function getDisplayName()
+	{
+		return __('plugins.generic.most.viewed.title');
+	}
+
+	/**
+	 * @return string plugin description
+	 */
+	public function getDescription()
+	{
+		return __('plugins.generic.most.viewed.desc');
+	}
+
+	/**
+	 * Register the plugin
+	 *
+	 * @param String $category
+	 * @param String $path
+	 * @param null $mainContextId
+	 * @return bool
+	 */
 	public function register($category, $path, $mainContextId = NULL)
 	{
 		$success = parent::register($category, $path);
+		HookRegistry::register('AcronPlugin::parseCronTab', array($this, 'callbackParseCronTab'));
 		if ($success && $this->getEnabled()) {
 			$request = Application::getRequest();
 			$templateMgr = TemplateManager::getManager($request);
@@ -13,12 +38,16 @@ class MostViewedPlugin extends GenericPlugin
 				'mostViewedArticles',
 				$request->getBaseUrl() . '/' . $this->getPluginPath() . '/css/mostViewed.css'
 			);
-			HookRegistry::register('AcronPlugin::parseCronTab', array($this, 'callbackParseCronTab'));
 			HookRegistry::register('Templates::Index::journal', array($this, 'mostViewedContent'));
 		}
 		return $success;
 	}
 
+	/**
+	 * Append most viewed Content to indexJournal.tpl
+	 * @param $hookName
+	 * @param $args
+	 */
 	public function mostViewedContent($hookName, $args)
 	{
 		$smarty =& $args[1];
@@ -36,17 +65,12 @@ class MostViewedPlugin extends GenericPlugin
 		$output .= $smarty->fetch($this->getTemplateResource('mostViewed.tpl'));
 	}
 
-	public function getDisplayName()
-	{
-		return __('plugins.generic.most.viewed.title');
-	}
-
-	public function getDescription()
-	{
-		return __('plugins.generic.most.viewed.desc');
-	}
-
-
+	/**
+	 * Add settings button to plugin
+	 * @param $request
+	 * @param array $verb
+	 * @return array
+	 */
 	public function getActions($request, $verb)
 	{
 		$router = $request->getRouter();
@@ -67,6 +91,12 @@ class MostViewedPlugin extends GenericPlugin
 		);
 	}
 
+	/**
+	 * Manage Settings
+	 * @param array $args
+	 * @param PKPRequest $request
+	 * @return JSONMessage
+	 */
 	public function manage($args, $request)
 	{
 		switch ($request->getUserVar('verb')) {
@@ -86,7 +116,14 @@ class MostViewedPlugin extends GenericPlugin
 		return parent::manage($args, $request);
 	}
 
-	function callbackParseCronTab($hookName, $args) {
+	/**
+	 * Acron Plugin Auto Stage: It is needed if server has no configured cron jobs.
+	 * @param $hookName
+	 * @param $args
+	 * @return bool
+	 */
+	function callbackParseCronTab($hookName, $args)
+	{
 		if ($this->getEnabled() || !Config::getVar('general', 'installed')) {
 			$taskFilesPath =& $args[0]; // Reference needed.
 			$taskFilesPath[] = $this->getPluginPath() . DIRECTORY_SEPARATOR . 'scheduledTasksAutoStage.xml';

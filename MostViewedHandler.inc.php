@@ -4,9 +4,6 @@ import('lib.pkp.classes.scheduledTask.ScheduledTask');
 
 class MostViewedHandler extends ScheduledTask
 {
-
-	var $_plugin;
-
 	/**
 	 * @copydoc ScheduledTask::getName()
 	 */
@@ -17,21 +14,11 @@ class MostViewedHandler extends ScheduledTask
 
 
 	/**
-	 * Constructor.
-	 * @param $args
-	 */
-	function __construct($args)
-	{
-		$this->_plugin = PluginRegistry::getPlugin('generic', 'mostviewedplugin');
-		parent::__construct($args);
-	}
-
-	/**
 	 * @copydoc ScheduledTask::executeActions()
 	 */
 	public function executeActions()
 	{
-		$plugin = $this->_plugin;
+		$plugin = PluginRegistry::getPlugin('generic', 'mostviewedplugin');
 		if (!$plugin->getEnabled()) {
 			return false;
 		}
@@ -68,8 +55,64 @@ class MostViewedHandler extends ScheduledTask
 			$dateTime = new DateTime('now');
 			$date = $dateTime->modify('-' . $date . ' year')->format('Y');
 		}
+		$versionString = DAORegistry::getDAO('VersionDAO')->getCurrentVersion()->getVersionString();
+		if ($versionString && preg_match('/^3\.2/', $versionString) == 1) {
+			$articles = $this->getMetrics_3_2($plugin, $contextId, $mostReadDays, $range, $date);
+		} else if ($versionString && preg_match('/^3\.1/', $versionString) == 1) {
+			$articles = $this->getMetrics_3_1($contextId, $mostReadDays, $range, $date);
+		} else {
+			return false;
+		}
+		$plugin->updateSetting($contextId, 'articles', json_encode($articles));
+	}
+
+	private function getMetrics_3_2($plugin, $contextId, $mostReadDays, $range, $date)
+	{
+		$dayString = "-" . $mostReadDays . " days";
+		$daysAgo = date('Y-m-d', strtotime($dayString));
+		$currentDate = date('Y-m-d');
+		$topSubmissions = Services::get('stats')->getOrderedObjects(
+			STATISTICS_DIMENSION_SUBMISSION_ID,
+			STATISTICS_ORDER_DESC,
+			[
+				'contextIds' => [$contextId],
+				'dateEnd' => $currentDate,
+				'dateStart' => $daysAgo,
+				'count' => $date ? null : $range,
+				'offset' => 0,
+			]
+		);
+		$articles = array();
+		$cc = 0;
+		foreach ($topSubmissions as $topSubmission) {
+			$submissionId = $topSubmission['id'];
+			$submissionService = Services::get('submission');
+			$submission = $submissionService->get($submissionId);
+			if ($submission) {
+				if ($date && $submission->getDatePublished() < $date)
+					continue;
+				$articles[$submissionId]['articleId'] = $submissionId;
+				$articles[$submissionId]['articleTitle'] =  $submission->getCurrentPublication()->getLocalizedTitle();
+				$articles[$submissionId]['articleSubtitle'] = $submission->getCurrentPublication()->getLocalizedData('subtitle', $submission->getLocale());
+				$articles[$submissionId]['articleAuthor'] = $submission->getCurrentPublication()->getShortAuthorString();
+				$articles[$submissionId]['metric'] = $topSubmission['total'];
+				if (++$cc >= $range)
+					break;
+			}
+		}
+		return $articles;
+	}
+
+	/**
+	 * @param $contextId
+	 * @param $mostReadDays
+	 * @param $range
+	 * @param $date
+	 * @return array
+	 */
+	private function getMetrics_3_1($contextId, $mostReadDays, $range, $date)
+	{
 		$publishedArticleDao = DAORegistry::getDAO('PublishedArticleDAO');
-		$journalDao = DAORegistry::getDAO('JournalDAO');
 		$dayString = "-" . $mostReadDays . " days";
 		$daysAgo = date('Ymd', strtotime($dayString));
 		$currentDate = date('Ymd');
@@ -92,8 +135,6 @@ class MostViewedHandler extends ScheduledTask
 			if ($article) {
 				if ($date && $article->getDatePublished() < $date)
 					continue;
-				$journal = $journalDao->getById($article->getJournalId());
-				$articles[$submissionId]['journalPath'] = $journal->getPath();
 				$articles[$submissionId]['articleId'] = $article->getBestArticleId();
 				$articles[$submissionId]['articleTitle'] = $article->getLocalizedTitle($article->getLocale());
 				$articles[$submissionId]['articleSubtitle'] = $article->getLocalizedSubtitle($article->getLocale());
@@ -103,6 +144,6 @@ class MostViewedHandler extends ScheduledTask
 					break;
 			}
 		}
-		$plugin->updateSetting($contextId, 'articles', json_encode($articles));
+		return $articles;
 	}
 }
