@@ -12,10 +12,6 @@ class MostViewedHandler extends ScheduledTask
 		return __('admin.scheduledTask.mostViewed');
 	}
 
-	/**
-	 * @return bool
-	 * @throws Exception
-	 */
 	public function executeActions()
 	{
 		$plugin = PluginRegistry::getPlugin('generic', 'mostviewedplugin');
@@ -46,14 +42,6 @@ class MostViewedHandler extends ScheduledTask
 		return true;
 	}
 
-	/**
-	 * @param $plugin
-	 * @param $contextId
-	 * @param int $mostReadDays
-	 * @param int $range
-	 * @param null $date
-	 * @throws Exception
-	 */
 	public function saveMetricsToPluginSettings($plugin, $contextId, $mostReadDays = 30, $range = 5, $date = null)
 	{
 		if ($date != null && intval($date) > 0) {
