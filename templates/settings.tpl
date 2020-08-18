@@ -16,7 +16,7 @@
     {csrf}
     {fbvFormArea}
         {fbvFormSection title="plugins.generic.most.viewed.head"}
-            {fbvElement type="text" id="mostViewedTitle"  value=$mostViewedTitle label="plugins.generic.most.viewed.head.desc"}
+            {fbvElement type="text" id="mostViewedTitle"  value=$mostViewedTitle label="plugins.generic.most.viewed.head.desc" multilingual=true }
         {/fbvFormSection}
         {fbvFormSection title="plugins.generic.most.viewed.days"}
             {fbvElement type="text" id="mostViewedDays" required="true" class="checkNum" value=$mostViewedDays label="plugins.generic.most.viewed.days.desc"}

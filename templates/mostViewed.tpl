@@ -14,7 +14,7 @@
 		</style>
     {/if}
 	<div class="most-viewed obj_article_summary">
-		<h2 class="most-viewed-headline">{if $mostReadHeadline}{$mostReadHeadline}{else}{translate key="plugins.generic.most.viewed.headline"}{/if}</h2>
+		<h2 class="most-viewed-headline">{if $mostReadHeadline[$currentLocale]}{$mostReadHeadline[$currentLocale]}{else}{translate key="plugins.generic.most.viewed.headline"}{/if}</h2>
         {foreach from=$mostReadArticles item="article"}
 			<div class="most-viewed-content">
 				<div class="most-viewed-title">
