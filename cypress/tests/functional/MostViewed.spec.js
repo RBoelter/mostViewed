@@ -1,7 +1,7 @@
 describe('Most Viewed Articles plugin tests', function () {
 
 	it('Disable Most Viewed Articles', function () {
-		cy.login('ojs', 'ojs', 'tj');
+		cy.login('admin', 'admin', 'publicknowledge');
 		cy.get('ul[id="navigationPrimary"] a:contains("Settings")').click();
 		cy.get('ul[id="navigationPrimary"] a:contains("Website")').click();
 		cy.get('button[id="plugins-button"]').click();
@@ -17,7 +17,7 @@ describe('Most Viewed Articles plugin tests', function () {
 	});
 
 	it('Enable Most Viewed Articles', function () {
-		cy.login('ojs', 'ojs', 'tj');
+		cy.login('admin', 'admin', 'publicknowledge');
 		cy.get('ul[id="navigationPrimary"] a:contains("Settings")').click();
 		cy.get('ul[id="navigationPrimary"] a:contains("Website")').click();
 		cy.get('button[id="plugins-button"]').click();
