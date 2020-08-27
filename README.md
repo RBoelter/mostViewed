@@ -1,4 +1,4 @@
-# mostViewed
+# mostViewed [![Build Status](https://travis-ci.org/RBoelter/mostViewed.svg?branch=master)](https://travis-ci.org/RBoelter/mostViewed)
 
 ## Installation
 Install the plugin via plugin gallery
