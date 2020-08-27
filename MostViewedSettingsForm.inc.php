@@ -5,8 +5,6 @@ import('lib.pkp.classes.form.Form');
 
 class MostViewedSettingsForm extends Form
 {
-
-
 	public $plugin;
 
 	public function __construct($plugin)
@@ -19,7 +17,7 @@ class MostViewedSettingsForm extends Form
 
 	public function initData()
 	{
-		$contextId = Application::getRequest()->getContext()->getId();
+		$contextId = Application::get()->getRequest()->getContext()->getId();
 		$data = $this->plugin->getSetting($contextId, 'settings');
 		if ($data != null && $data != '') {
 			$data = json_decode($data, true);
@@ -42,31 +40,34 @@ class MostViewedSettingsForm extends Form
 	{
 		$templateMgr = TemplateManager::getManager($request);
 		$templateMgr->assign('pluginName', $this->plugin->getName());
+
 		return parent::fetch($request, $template, $display);
 	}
 
-	public function execute()
+	public function execute(...$functionArgs)
 	{
-		$contextId = Application::getRequest()->getContext()->getId();
+		$contextId = Application::get()->getRequest()->getContext()->getId();
 		$data = [
 			"title" => $this->getData('mostViewedTitle'),
 			"days" => $this->getData('mostViewedDays'),
 			"amount" => $this->getData('mostViewedAmount'),
 			"years" => $this->getData('mostViewedYears'),
-			"position" => $this->getData('mostViewedPosition')
+			"position" => $this->getData('mostViewedPosition'),
 		];
 		$this->plugin->updateSetting($contextId, 'settings', json_encode($data));
 		import('plugins.generic.mostViewed.MostViewedHandler');
 		$handler = new MostViewedHandler();
-		if (!is_nan($data['days']) && !is_nan($data['amount']) && ($data['years'] == '' || !is_nan($data['years'])))
+		if (!is_nan($data['days']) && !is_nan($data['amount']) && ($data['years'] == '' || !is_nan($data['years']))) {
 			$handler->saveMetricsToPluginSettings($this->plugin, $contextId, intval($data['days']), intval($data['amount']), intval($data['years']));
+		}
 		import('classes.notification.NotificationManager');
 		$notificationMgr = new NotificationManager();
 		$notificationMgr->createTrivialNotification(
-			Application::getRequest()->getUser()->getId(),
+			Application::get()->getRequest()->getUser()->getId(),
 			NOTIFICATION_TYPE_SUCCESS,
 			['contents' => __('common.changesSaved')]
 		);
+
 		return parent::execute();
 	}
 }

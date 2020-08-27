@@ -32,7 +32,7 @@ class MostViewedPlugin extends GenericPlugin
 		$success = parent::register($category, $path);
 		HookRegistry::register('AcronPlugin::parseCronTab', array($this, 'callbackParseCronTab'));
 		if ($success && $this->getEnabled()) {
-			$request = Application::getRequest();
+			$request = Application::get()->getRequest();
 			$templateMgr = TemplateManager::getManager($request);
 			$templateMgr->addStyleSheet(
 				'mostViewedArticles',
@@ -52,7 +52,7 @@ class MostViewedPlugin extends GenericPlugin
 	{
 		$smarty =& $args[1];
 		$output =& $args[2];
-		$request = Application::getRequest();
+		$request = Application::get()->getRequest();
 		$contextId = $request->getContext()->getId();
 		$smarty->assign('mostReadArticles', json_decode($this->getSetting($contextId, 'articles'), true));
 		$settings = json_decode($this->getSetting($contextId, 'settings'), true);
