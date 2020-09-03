@@ -17,7 +17,7 @@ class MostViewedSettingsForm extends Form
 
 	public function initData()
 	{
-		$contextId = Application::get()->getRequest()->getContext()->getId();
+		$contextId = Application::getRequest()->getContext()->getId();
 		$data = $this->plugin->getSetting($contextId, 'settings');
 		if ($data != null && $data != '') {
 			$data = json_decode($data, true);
@@ -46,7 +46,7 @@ class MostViewedSettingsForm extends Form
 
 	public function execute(...$functionArgs)
 	{
-		$contextId = Application::get()->getRequest()->getContext()->getId();
+		$contextId = Application::getRequest()->getContext()->getId();
 		$data = [
 			"title" => $this->getData('mostViewedTitle'),
 			"days" => $this->getData('mostViewedDays'),
@@ -63,7 +63,7 @@ class MostViewedSettingsForm extends Form
 		import('classes.notification.NotificationManager');
 		$notificationMgr = new NotificationManager();
 		$notificationMgr->createTrivialNotification(
-			Application::get()->getRequest()->getUser()->getId(),
+			Application::getRequest()->getUser()->getId(),
 			NOTIFICATION_TYPE_SUCCESS,
 			['contents' => __('common.changesSaved')]
 		);

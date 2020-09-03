@@ -59,59 +59,15 @@ class MostViewedHandler extends ScheduledTask
 			$dateTime = new DateTime('now');
 			$date = $dateTime->modify('-'.$date.' year')->format('Y');
 		}
-		$versionString = DAORegistry::getDAO('VersionDAO')->getCurrentVersion()->getVersionString();
+
 		$articles = null;
-		if ($versionString && preg_match('/^3\.2/', $versionString) == 1) {
-			$articles = $this->getMetrics_3_2($contextId, $mostReadDays, $range, $date);
-		} else {
-			if ($versionString && preg_match('/^3\.1/', $versionString) == 1) {
-				$articles = $this->getMetrics_3_1($contextId, $mostReadDays, $range, $date);
-			}
-		}
+		$articles = $this->getMetrics($contextId, $mostReadDays, $range, $date);
 		if ($articles != null) {
 			$plugin->updateSetting($contextId, 'articles', json_encode($articles));
 		}
 	}
 
-	private function getMetrics_3_2($contextId, $mostReadDays, $range, $date)
-	{
-		$dayString = "-".$mostReadDays." days";
-		$daysAgo = date('Y-m-d', strtotime($dayString));
-		$currentDate = date('Y-m-d');
-		$topSubmissions = Services::get('stats')->getOrderedObjects(
-			STATISTICS_DIMENSION_SUBMISSION_ID,
-			STATISTICS_ORDER_DESC,
-			[
-				'contextIds' => [$contextId],
-				'dateEnd' => $currentDate,
-				'dateStart' => $daysAgo,
-				'count' => $date ? null : $range,
-				'offset' => 0,
-			]
-		);
-		$articles = array();
-		$cc = 0;
-		foreach ($topSubmissions as $topSubmission) {
-			$submissionId = $topSubmission['id'];
-			$submissionService = Services::get('submission');
-			$submission = $submissionService->get($submissionId);
-			if ($submission) {
-				if ($date && $submission->getDatePublished() < $date) {
-					continue;
-				}
-				$articles[$submissionId]['articleId'] = $submissionId;
-				$articles[$submissionId]['articleTitle'] = $submission->getCurrentPublication()->getLocalizedTitle();
-				$articles[$submissionId]['articleSubtitle'] = $submission->getCurrentPublication()->getLocalizedData('subtitle', $submission->getLocale());
-				$articles[$submissionId]['articleAuthor'] = $submission->getCurrentPublication()->getShortAuthorString();
-				$articles[$submissionId]['metric'] = $topSubmission['total'];
-				if (++$cc >= $range) {
-					break;
-				}
-			}
-		}
 
-		return $articles;
-	}
 
 	/**
 	 * @param $contextId
@@ -120,7 +76,7 @@ class MostViewedHandler extends ScheduledTask
 	 * @param $date
 	 * @return array
 	 */
-	private function getMetrics_3_1($contextId, $mostReadDays, $range, $date)
+	private function getMetrics($contextId, $mostReadDays, $range, $date)
 	{
 		$publishedArticleDao = DAORegistry::getDAO('PublishedArticleDAO');
 		$dayString = "-".$mostReadDays." days";
@@ -156,7 +112,6 @@ class MostViewedHandler extends ScheduledTask
 				}
 			}
 		}
-
 		return $articles;
 	}
 }
