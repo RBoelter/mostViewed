@@ -5,6 +5,10 @@ os: linux
 dist: xenial
 language: php
 
+branches:
+    only:
+        - master
+
 addons:
     apt:
         update: true
