@@ -76,6 +76,7 @@ class MostViewedHandler extends ScheduledTask
 	private function getMetrics_3_2($contextId, $mostReadDays, $range, $date)
 	{
 		$dayString = "-".$mostReadDays." days";
+		$range = $range + 1;
 		$daysAgo = date('Y-m-d', strtotime($dayString));
 		$currentDate = date('Y-m-d');
 		$topSubmissions = Services::get('stats')->getOrderedObjects(
