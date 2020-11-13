@@ -2,11 +2,27 @@
 
 import('lib.pkp.classes.form.Form');
 
-
+/**
+ * @file plugins/generic/mostViewed/MostViewedSettingsForm.inc.php
+ *
+ * Copyright (c) 2014-2020 Simon Fraser University
+ * Copyright (c) 2003-2020 John Willinsky
+ * Copyright (c) 2020 Ronny Bölter, Leibniz Institute for Psychology (ZPID)
+ *
+ * Distributed under the GNU GPL v3. For full terms see the file LICENSE.
+ *
+ * @class MostViewedSettingsForm
+ * @ingroup plugins_generic_mostViewed
+ *
+ * @brief Class for MostViewed Plugin settings implementation
+ */
 class MostViewedSettingsForm extends Form
 {
 	public $plugin;
 
+	/**
+	 * @copydoc Form::__construct
+	 */
 	public function __construct($plugin)
 	{
 		parent::__construct($plugin->getTemplateResource('settings.tpl'));
@@ -15,6 +31,9 @@ class MostViewedSettingsForm extends Form
 		$this->addCheck(new FormValidatorCSRF($this));
 	}
 
+	/**
+	 * @copydoc Form::initData
+	 */
 	public function initData()
 	{
 		$contextId = Application::get()->getRequest()->getContext()->getId();
@@ -30,12 +49,18 @@ class MostViewedSettingsForm extends Form
 		parent::initData();
 	}
 
+	/**
+	 * @copydoc Form::readInputData
+	 */
 	public function readInputData()
 	{
 		$this->readUserVars(['mostViewedTitle', 'mostViewedDays', 'mostViewedAmount', 'mostViewedYears', 'mostViewedPosition']);
 		parent::readInputData();
 	}
 
+	/**
+	 * @copydoc Form::fetch
+	 */
 	public function fetch($request, $template = null, $display = false)
 	{
 		$templateMgr = TemplateManager::getManager($request);
@@ -44,6 +69,9 @@ class MostViewedSettingsForm extends Form
 		return parent::fetch($request, $template, $display);
 	}
 
+	/**
+	 * @copydoc Form::execute
+	 */
 	public function execute(...$functionArgs)
 	{
 		$contextId = Application::get()->getRequest()->getContext()->getId();

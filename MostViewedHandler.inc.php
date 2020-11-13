@@ -2,6 +2,20 @@
 
 import('lib.pkp.classes.scheduledTask.ScheduledTask');
 
+/**
+ * @file plugins/generic/mostViewed/MostViewedHandler.inc.php
+ *
+ * Copyright (c) 2014-2020 Simon Fraser University
+ * Copyright (c) 2003-2020 John Willinsky
+ * Copyright (c) 2020 Ronny Bölter, Leibniz Institute for Psychology (ZPID)
+ *
+ * Distributed under the GNU GPL v3. For full terms see the file LICENSE.
+ *
+ * @class MostViewedHandler
+ * @ingroup plugins_generic_mostViewed
+ *
+ * @brief Class for cron job functions.
+ */
 class MostViewedHandler extends ScheduledTask
 {
 	/**
@@ -14,6 +28,8 @@ class MostViewedHandler extends ScheduledTask
 
 
 	/**
+	 * This function is called via cron job or acron plugin.
+	 *
 	 * @copydoc ScheduledTask::executeActions()
 	 */
 	public function executeActions()
@@ -35,13 +51,13 @@ class MostViewedHandler extends ScheduledTask
 			$settings = $plugin->getSetting($context->getId(), 'settings');
 			if ($settings) {
 				$settings = json_decode($settings, true);
-				if (intval($settings['days']) > 0) {
+				if (key_exists('days', $settings) && is_int($settings['days']) && intval($settings['days']) > 0) {
 					$mostReadDays = intval($settings['days']);
 				}
-				if (intval($settings['amount']) > 0) {
+				if (key_exists('amount', $settings) && is_int($settings['amount']) && intval($settings['amount']) > 0) {
 					$amount = intval($settings['amount']);
 				}
-				if (intval($settings['years']) > 0) {
+				if (key_exists('years', $settings) && is_int($settings['years']) && intval($settings['years']) > 0) {
 					$maxYearsBack = intval($settings['years']);
 				} else {
 					$maxYearsBack = null;
@@ -53,31 +69,42 @@ class MostViewedHandler extends ScheduledTask
 		return true;
 	}
 
-	public function saveMetricsToPluginSettings($plugin, $contextId, $mostReadDays = 30, $range = 5, $date = null)
+	/**
+	 * Saves the metrics to plugin settings to keep the page load as fast as possible.
+	 * This function is called when saving the plugin settings and daily via cron job/acron plugin.
+	 *
+	 * @param $plugin
+	 * @param $contextId
+	 * @param int $mostReadDays
+	 * @param int $range
+	 * @param null $maxYearsBack
+	 */
+	public function saveMetricsToPluginSettings($plugin, $contextId, $mostReadDays = 30, $range = 5, $maxYearsBack = null)
 	{
-		if ($date != null && intval($date) > 0) {
+		if ($maxYearsBack != null && intval($maxYearsBack) > 0) {
 			$dateTime = new DateTime('now');
-			$date = $dateTime->modify('-'.$date.' year')->format('Y');
+			$maxYearsBack = $dateTime->modify('-'.$maxYearsBack.' year')->format('Y');
 		}
-		$versionString = DAORegistry::getDAO('VersionDAO')->getCurrentVersion()->getVersionString();
-		$articles = null;
-		if ($versionString && preg_match('/^3\.2/', $versionString) == 1) {
-			$articles = $this->getMetrics_3_2($contextId, $mostReadDays, $range, $date);
-		} else {
-			if ($versionString && preg_match('/^3\.1/', $versionString) == 1) {
-				$articles = $this->getMetrics_3_1($contextId, $mostReadDays, $range, $date);
-			}
-		}
+		$articles = $this->getMetrics($contextId, $mostReadDays, $range, $maxYearsBack);
 		if ($articles != null) {
 			$plugin->updateSetting($contextId, 'articles', json_encode($articles));
 		}
 	}
 
-	private function getMetrics_3_2($contextId, $mostReadDays, $range, $date)
+	/**
+	 * This function gets the current metrics from the metrics table and sorts them depending on the settings of the plugin
+	 *
+	 * @param $contextId
+	 * @param $mostReadDays
+	 * @param $range
+	 * @param $maxYearsBack
+	 * @return array
+	 */
+	private function getMetrics($contextId, $mostReadDays, $range, $maxYearsBack)
 	{
 		$dayString = "-".$mostReadDays." days";
 		$range = $range + 1;
-		$daysAgo = date('Y-m-d', strtotime($dayString));
+		$dateStart = date('Y-m-d', strtotime($dayString));
 		$currentDate = date('Y-m-d');
 		$topSubmissions = Services::get('stats')->getOrderedObjects(
 			STATISTICS_DIMENSION_SUBMISSION_ID,
@@ -85,8 +112,8 @@ class MostViewedHandler extends ScheduledTask
 			[
 				'contextIds' => [$contextId],
 				'dateEnd' => $currentDate,
-				'dateStart' => $daysAgo,
-				'count' => $date ? null : $range,
+				'dateStart' => $dateStart,
+				'count' => $maxYearsBack ? null : $range,
 				'offset' => 0,
 			]
 		);
@@ -97,7 +124,7 @@ class MostViewedHandler extends ScheduledTask
 			$submissionService = Services::get('submission');
 			$submission = $submissionService->get($submissionId);
 			if ($submission) {
-				if ($date && $submission->getDatePublished() < $date) {
+				if ($maxYearsBack && $submission->getDatePublished() < $maxYearsBack) {
 					continue;
 				}
 				$articles[$submissionId]['articleId'] = $submissionId;
@@ -114,50 +141,4 @@ class MostViewedHandler extends ScheduledTask
 		return $articles;
 	}
 
-	/**
-	 * @param $contextId
-	 * @param $mostReadDays
-	 * @param $range
-	 * @param $date
-	 * @return array
-	 */
-	private function getMetrics_3_1($contextId, $mostReadDays, $range, $date)
-	{
-		$publishedArticleDao = DAORegistry::getDAO('PublishedArticleDAO');
-		$dayString = "-".$mostReadDays." days";
-		$daysAgo = date('Ymd', strtotime($dayString));
-		$currentDate = date('Ymd');
-		$filter = array(
-			STATISTICS_DIMENSION_CONTEXT_ID => $contextId,
-		);
-		$filter[STATISTICS_DIMENSION_DAY]['from'] = $daysAgo;
-		$filter[STATISTICS_DIMENSION_DAY]['to'] = $currentDate;
-		$orderBy = array(STATISTICS_METRIC => STATISTICS_ORDER_DESC);
-		$column = array(STATISTICS_DIMENSION_SUBMISSION_ID);
-		import('lib.pkp.classes.db.DBResultRange');
-		$dbResultRange = new DBResultRange($date ? null : $range + 1);
-		$metricsDao =& DAORegistry::getDAO('MetricsDAO');
-		$result = $metricsDao->getMetrics(OJS_METRIC_TYPE_COUNTER, $column, $filter, $orderBy, $dbResultRange);
-		$articles = array();
-		$cc = 0;
-		foreach ($result as $resultRecord) {
-			$submissionId = $resultRecord[STATISTICS_DIMENSION_SUBMISSION_ID];
-			$article = $publishedArticleDao->getById($submissionId);
-			if ($article) {
-				if ($date && $article->getDatePublished() < $date) {
-					continue;
-				}
-				$articles[$submissionId]['articleId'] = $article->getBestArticleId();
-				$articles[$submissionId]['articleTitle'] = $article->getLocalizedTitle($article->getLocale());
-				$articles[$submissionId]['articleSubtitle'] = $article->getLocalizedSubtitle($article->getLocale());
-				$articles[$submissionId]['articleAuthor'] = $article->getAuthorString();
-				$articles[$submissionId]['metric'] = $resultRecord[STATISTICS_METRIC];
-				if (++$cc >= $range) {
-					break;
-				}
-			}
-		}
-
-		return $articles;
-	}
 }

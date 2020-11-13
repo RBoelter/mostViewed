@@ -1,6 +1,20 @@
 <?php
 import('lib.pkp.classes.plugins.GenericPlugin');
 
+/**
+ * @file plugins/generic/mostViewed/MostViewedPlugin.inc.php
+ *
+ * Copyright (c) 2014-2020 Simon Fraser University
+ * Copyright (c) 2003-2020 John Willinsky
+ * Copyright (c) 2020 Ronny Bölter, Leibniz Institute for Psychology (ZPID)
+ *
+ * Distributed under the GNU GPL v3. For full terms see the file LICENSE.
+ *
+ * @class MostViewedPlugin
+ * @ingroup plugins_generic_mostViewed
+ *
+ * @brief Class for plugin and handler registration
+ */
 class MostViewedPlugin extends GenericPlugin
 {
 	/**
@@ -27,7 +41,7 @@ class MostViewedPlugin extends GenericPlugin
 	 * @param null $mainContextId
 	 * @return bool
 	 */
-	public function register($category, $path, $mainContextId = NULL)
+	public function register($category, $path, $mainContextId = null)
 	{
 		$success = parent::register($category, $path);
 		HookRegistry::register('AcronPlugin::parseCronTab', array($this, 'callbackParseCronTab'));
@@ -36,10 +50,11 @@ class MostViewedPlugin extends GenericPlugin
 			$templateMgr = TemplateManager::getManager($request);
 			$templateMgr->addStyleSheet(
 				'mostViewedArticles',
-				$request->getBaseUrl() . '/' . $this->getPluginPath() . '/css/mostViewed.css'
+				$request->getBaseUrl().'/'.$this->getPluginPath().'/css/mostViewed.css'
 			);
 			HookRegistry::register('Templates::Index::journal', array($this, 'mostViewedContent'));
 		}
+
 		return $success;
 	}
 
@@ -53,14 +68,17 @@ class MostViewedPlugin extends GenericPlugin
 		$smarty =& $args[1];
 		$output =& $args[2];
 		$request = Application::get()->getRequest();
-		$contextId = $request->getContext()->getId();
+		$context = $request->getContext();
+		$contextId = ($context && $context->getId()) ? $context->getId() : CONTEXT_SITE;
 		$smarty->assign('mostReadArticles', json_decode($this->getSetting($contextId, 'articles'), true));
 		$settings = json_decode($this->getSetting($contextId, 'settings'), true);
 		if ($settings) {
-			if ($settings['title'])
+			if ($settings['title']) {
 				$smarty->assign('mostReadHeadline', $settings['title']);
-			if ($settings['position'])
+			}
+			if ($settings['position']) {
 				$smarty->assign('mostReadPosition', $settings['position']);
+			}
 		}
 		$output .= $smarty->fetch($this->getTemplateResource('mostViewed.tpl'));
 	}
@@ -75,6 +93,7 @@ class MostViewedPlugin extends GenericPlugin
 	{
 		$router = $request->getRouter();
 		import('lib.pkp.classes.linkAction.request.AjaxModal');
+
 		return array_merge(
 			$this->getEnabled() ? array(
 				new LinkAction(
@@ -105,14 +124,17 @@ class MostViewedPlugin extends GenericPlugin
 				$form = new MostViewedSettingsForm($this);
 				if (!$request->getUserVar('save')) {
 					$form->initData();
+
 					return new JSONMessage(true, $form->fetch($request));
 				}
 				$form->readInputData();
 				if ($form->validate()) {
 					$form->execute();
+
 					return new JSONMessage(true);
 				}
 		}
+
 		return parent::manage($args, $request);
 	}
 
@@ -126,8 +148,9 @@ class MostViewedPlugin extends GenericPlugin
 	{
 		if ($this->getEnabled() || !Config::getVar('general', 'installed')) {
 			$taskFilesPath =& $args[0]; // Reference needed.
-			$taskFilesPath[] = $this->getPluginPath() . DIRECTORY_SEPARATOR . 'scheduledTasksAutoStage.xml';
+			$taskFilesPath[] = $this->getPluginPath().DIRECTORY_SEPARATOR.'scheduledTasksAutoStage.xml';
 		}
+
 		return false;
 	}
 }

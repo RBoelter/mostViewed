@@ -1,30 +1,44 @@
 .most-viewed-author {
-    font-size: 13px;
-    min-width: 100%;
-    display: grid;
-    grid-template-columns: 1fr fit-content(250px);
+	font-size: 13px;
+	min-width: 100%;
+	display: grid;
+	grid-template-columns: 1fr fit-content(250px);
 }
 
 .most-viewed-title a {
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: 700;
-    text-decoration: none;
-    margin-bottom: 50px;
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: 700;
+	text-decoration: none;
+	margin-bottom: 50px;
 }
 
 .most-viewed-content:not(:last-child) {
-    /*border-bottom: 1px solid rgba(0, 0, 0, .125);*/
-    margin-bottom: 20px;
+	/*border-bottom: 1px solid rgba(0, 0, 0, .125);*/
+	margin-bottom: 20px;
 }
 
-.most-viewed-content .most-viewed-subtitle{
-    margin-bottom: 5px;
+.most-viewed-content .most-viewed-subtitle {
+	margin-bottom: 5px;
 }
 
-.most-viewed-author> div:first-child{
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.most-viewed-author > div:first-child {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
+.most-viewed-headline {
+	display: block;
+	margin-bottom: 10px;
+	margin-top: 0;
+	font-family: Lato, sans-serif;
+	font-size: 16px !important;
+	font-weight: 700;
+	line-height: 20px;
+	color: rgba(0, 0, 0, 0.54);
+}
+
+.page_index_journal > .most-viewed{
+	margin-bottom: 20px;
+}
