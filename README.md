@@ -1,5 +1,5 @@
 # mostViewed
-[![Build Status](https://travis-ci.org/RBoelter/mostViewed.svg?branch=master)](https://travis-ci.org/RBoelter/mostViewed)
+[![Build Status](https://travis-ci.com/RBoelter/mostViewed.svg?branch=master)](https://travis-ci.com/RBoelter/mostViewed)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/RBoelter/mostViewed?include_prereleases&label=latest%20release)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/RBoelter/mostViewed)
 ![GitHub](https://img.shields.io/github/license/RBoelter/mostViewed)
