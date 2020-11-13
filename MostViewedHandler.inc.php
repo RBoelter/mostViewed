@@ -84,6 +84,8 @@ class MostViewedHandler extends ScheduledTask
 		if ($maxYearsBack != null && intval($maxYearsBack) > 0) {
 			$dateTime = new DateTime('now');
 			$maxYearsBack = $dateTime->modify('-'.$maxYearsBack.' year')->format('Y');
+		} else {
+			$maxYearsBack = null;
 		}
 		$articles = $this->getMetrics($contextId, $mostReadDays, $range, $maxYearsBack);
 		if ($articles != null) {
@@ -118,13 +120,13 @@ class MostViewedHandler extends ScheduledTask
 			]
 		);
 		$articles = array();
-		$cc = 0;
+		$cc = 1;
 		foreach ($topSubmissions as $topSubmission) {
 			$submissionId = $topSubmission['id'];
 			$submissionService = Services::get('submission');
 			$submission = $submissionService->get($submissionId);
 			if ($submission) {
-				if ($maxYearsBack && $submission->getDatePublished() < $maxYearsBack) {
+				if (isset($maxYearsBack) && $submission->getDatePublished() < $maxYearsBack) {
 					continue;
 				}
 				$articles[$submissionId]['articleId'] = $submissionId;
