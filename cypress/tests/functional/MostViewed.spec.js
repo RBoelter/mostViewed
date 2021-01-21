@@ -1,9 +1,9 @@
+/* eslint-disable */
 describe('Most Viewed Articles plugin tests', function () {
 
 	it('Disable Most Viewed Articles', function () {
 		cy.login('admin', 'admin', 'publicknowledge');
-		cy.get('ul[id="navigationPrimary"] a:contains("Settings")').click();
-		cy.get('ul[id="navigationPrimary"] a:contains("Website")').click();
+		cy.get('nav[class="app__nav"] a:contains("Website")').click();
 		cy.get('button[id="plugins-button"]').click();
 		// disable plugin if enabled
 		cy.get('input[id^="select-cell-mostviewedplugin-enabled"]')
@@ -18,8 +18,7 @@ describe('Most Viewed Articles plugin tests', function () {
 
 	it('Enable Most Viewed Articles', function () {
 		cy.login('admin', 'admin', 'publicknowledge');
-		cy.get('ul[id="navigationPrimary"] a:contains("Settings")').click();
-		cy.get('ul[id="navigationPrimary"] a:contains("Website")').click();
+		cy.get('nav[class="app__nav"] a:contains("Website")').click();
 		cy.get('button[id="plugins-button"]').click();
 		// Find and enable the plugin
 		cy.get('input[id^="select-cell-mostviewedplugin-enabled"]').click();
@@ -29,6 +28,7 @@ describe('Most Viewed Articles plugin tests', function () {
 		cy.get('a[id^="component-grid-settings-plugins-settingsplugingrid-category-generic-row-mostviewedplugin-settings-button"]').click();
 		// Fill out settings form
 		cy.get('form[id="mostViewedSettings"] input[name="mostViewedTitle[en_US]"]').clear().type('Most Viewed automated Test Title');
+		cy.get('form[id="mostViewedSettings"] input[name="mostViewedTitle[fr_CA]"]').clear().type('Les plus visités');
 		cy.get('form[id="mostViewedSettings"] input[name="mostViewedDays"]').clear().type('60');
 		cy.get('form[id="mostViewedSettings"] input[name="mostViewedAmount"]').clear().type('10');
 		cy.get('form[id="mostViewedSettings"] input[name="mostViewedYears"]').clear().type('25');
@@ -37,5 +37,11 @@ describe('Most Viewed Articles plugin tests', function () {
 		cy.get('form[id="mostViewedSettings"] button[id^="submitFormButton"]').click();
 		cy.waitJQuery();
 		cy.get('div:contains(\'Your changes have been saved.\')');
+	});
+
+	it('Check Most Viewed Content ', function () {
+		cy.visit('/');
+		cy.get('div[class^="most-viewed"]');
+		cy.get('h2[class="most-viewed-headline"]').should('have.text', 'Most Viewed automated Test Title');
 	});
 });

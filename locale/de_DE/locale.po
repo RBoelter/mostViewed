@@ -1,0 +1,57 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-01-21T13:41:04+00:00\n"
+"PO-Revision-Date: 2021-01-21T13:41:04+00:00\n"
+"Language: \n"
+
+msgid "admin.scheduledTask.mostViewed"
+msgstr "mostViewed"
+
+msgid "plugins.generic.most.viewed.title"
+msgstr "Beliebteste Artikel"
+
+msgid "plugins.generic.most.viewed.desc"
+msgstr "Zeigt die Top 5 der meistgesehenen und heruntergeladenen Artikel auf der Indexseite der Zeitschrift an."
+
+msgid "plugins.generic.most.viewed.headline"
+msgstr "Meistgesehene und heruntergeladene Artikel"
+
+msgid "plugins.generic.most.viewed.head"
+msgstr "Überschrift des \"Meist gesehene Artikel\" Bereiches"
+
+msgid "plugins.generic.most.viewed.head.desc"
+msgstr "Tragen Sie hier die Überschrift ein, die über dem Bereich der meistgesehenen und heruntergeladenen Artikel Bereich ausgegeben werden soll. Lassen Sie das Feld leer, wird eine Standardüberschrift angezeigt."
+
+msgid "plugins.generic.most.viewed.days"
+msgstr "Anzahl der Tage"
+
+msgid "plugins.generic.most.viewed.days.desc"
+msgstr "Tragen Sie hier die Anzahl der Tage für die Erfassung der Metriken ein. Wenn Sie beispielsweise 30 eingeben, werden nur die Metriken der letzten 30 Tage berücksichtigt, also alle Artikel, die in diesem Zeitraum aufgerufen oder heruntergeladen wurden."
+
+msgid "plugins.generic.most.viewed.amount"
+msgstr "Anzahl der Ergebnisse"
+
+msgid "plugins.generic.most.viewed.amount.desc"
+msgstr "Tragen Sie hier ein, wie viele Artikel Sie maximal anzeigen wollen."
+
+msgid "plugins.generic.most.viewed.years"
+msgstr "(Optional) Anzahl der maximal zu erfassenen Jahre"
+
+msgid "plugins.generic.most.viewed.years.desc"
+msgstr "Wenn Sie verhindern möchten, dass eventuell sehr alte Artikel angezeigt werden, können Sie mit dieser Einstellung die Anzahl der Jahre eingrenzen, die erfasst werden. Wenn Sie z.B. hier „2“ eintragen, dann werden nur die meistgesehenen Artikel der letzten 2 Jahre erfasst. Diese Einstellung ist optional."
+
+msgid "plugins.generic.most.viewed.position"
+msgstr "Ansicht unter der \"Aktuellen Ausgabe\""
+
+msgid "plugins.generic.most.viewed.position.desc"
+msgstr "Die Ansicht der meist gesehenen Artikel ist standardmäßig auf der Journal Index Seite ganz oben über der aktuellen Ausgabe. Um dies zu ändern, wurde ein JavaScript Workaround eingebaut, welcher die Ansicht unter der aktuellen Ausgabe einbindet. Dieser Workaround funktioniert nur, wenn in Ihrem Theme keine HTML-Elemente um den Hook gebaut wurden. Testen Sie bitte, ob diese Einstellungen bei Ihnen funktioniert und die Anzeige nach unten verschoben wird."
+
+msgid "plugins.generic.most.viewed.position.check"
+msgstr "Ansicht nach unten verschieben"
