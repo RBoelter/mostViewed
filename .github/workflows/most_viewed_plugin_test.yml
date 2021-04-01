@@ -19,7 +19,7 @@ jobs:
                 php-versions: [ '7.3', '7.4' ]
                 dbs: [ 'pgsql', 'mysql' ]
                 pkp-application: [ 'ojs' ]
-                pkp-branch: [ 'master' ]
+                pkp-branch: [ 'main' ]
         services:
             mysql:
                 image: bitnami/mysql:latest
