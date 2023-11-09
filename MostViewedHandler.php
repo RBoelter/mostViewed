@@ -64,13 +64,13 @@ class MostViewedHandler extends ScheduledTask
             $settings = $plugin->getSetting($context->getId(), 'settings');
             if ($settings) {
                 $settings = json_decode($settings, true);
-                if (is_int($settings['days'] ?? null) && intval($settings['days']) > 0) {
+                if (is_numeric($settings['days'] ?? null) && intval($settings['days']) > 0) {
                     $mostReadDays = intval($settings['days']);
                 }
-                if (is_int($settings['amount'] ?? null) && intval($settings['amount']) > 0) {
+                if (is_numeric($settings['amount'] ?? null) && intval($settings['amount']) > 0) {
                     $amount = intval($settings['amount']);
                 }
-                $maxYearsBack = is_int($settings['years'] ?? null) && intval($settings['years']) > 0
+                $maxYearsBack = is_numeric($settings['years'] ?? null) && intval($settings['years']) > 0
                     ? intval($settings['years'])
                     : null;
             }
