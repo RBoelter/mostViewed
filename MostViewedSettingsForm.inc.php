@@ -21,18 +21,17 @@ use APP\core\Application;
 use APP\notification\Notification;
 use APP\notification\NotificationManager;
 use APP\template\TemplateManager;
+use Exception;
 use PKP\form\Form;
 use PKP\form\validation\FormValidatorCSRF;
 use PKP\form\validation\FormValidatorPost;
 
 class MostViewedSettingsForm extends Form
 {
-	public $plugin;
-
 	/**
 	 * @copydoc Form::__construct
 	 */
-	public function __construct($plugin)
+	public function __construct(public MostViewedPlugin $plugin)
 	{
 		parent::__construct($plugin->getTemplateResource('settings.tpl'));
 		$this->plugin = $plugin;
@@ -43,17 +42,21 @@ class MostViewedSettingsForm extends Form
 	/**
 	 * @copydoc Form::initData
 	 */
-	public function initData()
+	public function initData(): void
 	{
 		$contextId = Application::get()->getRequest()->getContext()->getId();
 		$data = $this->plugin->getSetting($contextId, 'settings');
-		if ($data != null && $data != '') {
-			$data = json_decode($data, true);
-			$this->setData('mostViewedTitle', $data['title']);
-			$this->setData('mostViewedDays', $data['days']);
-			$this->setData('mostViewedAmount', $data['amount']);
-			$this->setData('mostViewedYears', $data['years']);
-			$this->setData('mostViewedPosition', $data['position']);
+		if (strlen($data ?? '')) {
+			try {
+				$data = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+				$this->setData('mostViewedTitle', $data['title']);
+				$this->setData('mostViewedDays', $data['days']);
+				$this->setData('mostViewedAmount', $data['amount']);
+				$this->setData('mostViewedYears', $data['years']);
+				$this->setData('mostViewedPosition', $data['position']);
+			} catch (Exception $e) {
+				error_log($e);
+			}
 		}
 		parent::initData();
 	}
@@ -61,7 +64,7 @@ class MostViewedSettingsForm extends Form
 	/**
 	 * @copydoc Form::readInputData
 	 */
-	public function readInputData()
+	public function readInputData(): void
 	{
 		$this->readUserVars(['mostViewedTitle', 'mostViewedDays', 'mostViewedAmount', 'mostViewedYears', 'mostViewedPosition']);
 		parent::readInputData();
@@ -70,7 +73,7 @@ class MostViewedSettingsForm extends Form
 	/**
 	 * @copydoc Form::fetch
 	 */
-	public function fetch($request, $template = null, $display = false)
+	public function fetch($request, $template = null, $display = false): string
 	{
 		$templateMgr = TemplateManager::getManager($request);
 		$templateMgr->assign('pluginName', $this->plugin->getName());
@@ -81,7 +84,7 @@ class MostViewedSettingsForm extends Form
 	/**
 	 * @copydoc Form::execute
 	 */
-	public function execute(...$functionArgs)
+	public function execute(...$functionArgs): mixed
 	{
 		$contextId = Application::get()->getRequest()->getContext()->getId();
 		$data = [
@@ -92,12 +95,10 @@ class MostViewedSettingsForm extends Form
 			"position" => $this->getData('mostViewedPosition'),
 		];
 		$this->plugin->updateSetting($contextId, 'settings', json_encode($data));
-		import('plugins.generic.mostViewed.MostViewedHandler');
 		$handler = new MostViewedHandler();
-		if (!is_nan($data['days']) && !is_nan($data['amount']) && ($data['years'] == '' || !is_nan($data['years']))) {
+		if (ctype_digit($data['days']) && ctype_digit($data['amount']) && ($data['years'] == '' || ctype_digit($data['years']))) {
 			$handler->saveMetricsToPluginSettings($this->plugin, $contextId, intval($data['days']), intval($data['amount']), intval($data['years']));
 		}
-		import('classes.notification.NotificationManager');
 		$notificationMgr = new NotificationManager();
 		$notificationMgr->createTrivialNotification(
 			Application::get()->getRequest()->getUser()->getId(),
@@ -105,6 +106,6 @@ class MostViewedSettingsForm extends Form
 			['contents' => __('common.changesSaved')]
 		);
 
-		return parent::execute();
+		return parent::execute(...$functionArgs);
 	}
 }
