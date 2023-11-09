@@ -1,11 +1,10 @@
 <?php
-import('lib.pkp.classes.plugins.GenericPlugin');
 
 /**
- * @file plugins/generic/mostViewed/MostViewedPlugin.inc.php
+ * @file MostViewedPlugin.inc.php
  *
- * Copyright (c) 2014-2020 Simon Fraser University
- * Copyright (c) 2003-2020 John Willinsky
+ * Copyright (c) 2014-2023 Simon Fraser University
+ * Copyright (c) 2003-2023 John Willinsky
  * Copyright (c) 2020 Ronny Bölter, Leibniz Institute for Psychology (ZPID)
  *
  * Distributed under the GNU GPL v3. For full terms see the file LICENSE.
@@ -15,6 +14,18 @@ import('lib.pkp.classes.plugins.GenericPlugin');
  *
  * @brief Class for plugin and handler registration
  */
+
+namespace APP\plugins\generic\mostViewed;
+
+use APP\core\Application;
+use APP\template\TemplateManager;
+use PKP\config\Config;
+use PKP\core\JSONMessage;
+use PKP\linkAction\LinkAction;
+use PKP\linkAction\request\AjaxModal;
+use PKP\plugins\GenericPlugin;
+use PKP\plugins\Hook;
+
 class MostViewedPlugin extends GenericPlugin
 {
 	/**
@@ -69,7 +80,7 @@ class MostViewedPlugin extends GenericPlugin
 		$output =& $args[2];
 		$request = Application::get()->getRequest();
 		$context = $request->getContext();
-		$contextId = ($context && $context->getId()) ? $context->getId() : CONTEXT_SITE;
+		$contextId = ($context && $context->getId()) ? $context->getId() : Application::CONTEXT_SITE;
 		$smarty->assign('mostReadArticles', json_decode($this->getSetting($contextId, 'articles'), true));
 		$settings = json_decode($this->getSetting($contextId, 'settings'), true);
 		if ($settings) {
@@ -120,7 +131,6 @@ class MostViewedPlugin extends GenericPlugin
 	{
 		switch ($request->getUserVar('verb')) {
 			case 'settings':
-				$this->import('MostViewedSettingsForm');
 				$form = new MostViewedSettingsForm($this);
 				if (!$request->getUserVar('save')) {
 					$form->initData();

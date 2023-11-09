@@ -1,12 +1,10 @@
 <?php
 
-import('lib.pkp.classes.scheduledTask.ScheduledTask');
-
 /**
- * @file plugins/generic/mostViewed/MostViewedHandler.inc.php
+ * @file MostViewedHandler.inc.php
  *
- * Copyright (c) 2014-2020 Simon Fraser University
- * Copyright (c) 2003-2020 John Willinsky
+ * Copyright (c) 2014-2023 Simon Fraser University
+ * Copyright (c) 2003-2023 John Willinsky
  * Copyright (c) 2020 Ronny Bölter, Leibniz Institute for Psychology (ZPID)
  *
  * Distributed under the GNU GPL v3. For full terms see the file LICENSE.
@@ -16,6 +14,16 @@ import('lib.pkp.classes.scheduledTask.ScheduledTask');
  *
  * @brief Class for cron job functions.
  */
+
+namespace APP\plugins\generic\mostViewed;
+
+use APP\core\Application;
+use APP\core\Services;
+use APP\statistics\StatisticsHelper;
+use DateTime;
+use PKP\plugins\PluginRegistry;
+use PKP\scheduledTask\ScheduledTask;
+
 class MostViewedHandler extends ScheduledTask
 {
 	/**
@@ -34,6 +42,7 @@ class MostViewedHandler extends ScheduledTask
 	 */
 	public function executeActions()
 	{
+        /** @var MostViewedPlugin $plugin */
 		$plugin = PluginRegistry::getPlugin('generic', 'mostviewedplugin');
 		if (!$plugin->getEnabled()) {
 			return false;
@@ -109,8 +118,8 @@ class MostViewedHandler extends ScheduledTask
 		$dateStart = date('Y-m-d', strtotime($dayString));
 		$currentDate = date('Y-m-d');
 		$topSubmissions = Services::get('stats')->getOrderedObjects(
-			STATISTICS_DIMENSION_SUBMISSION_ID,
-			STATISTICS_ORDER_DESC,
+			StatisticsHelper::STATISTICS_DIMENSION_SUBMISSION_ID,
+			StatisticsHelper::STATISTICS_ORDER_DESC,
 			[
 				'contextIds' => [$contextId],
 				'dateEnd' => $currentDate,

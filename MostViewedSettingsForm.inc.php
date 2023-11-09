@@ -1,12 +1,10 @@
 <?php
 
-import('lib.pkp.classes.form.Form');
-
 /**
- * @file plugins/generic/mostViewed/MostViewedSettingsForm.inc.php
+ * @file MostViewedSettingsForm.inc.php
  *
- * Copyright (c) 2014-2020 Simon Fraser University
- * Copyright (c) 2003-2020 John Willinsky
+ * Copyright (c) 2014-2023 Simon Fraser University
+ * Copyright (c) 2003-2023 John Willinsky
  * Copyright (c) 2020 Ronny Bölter, Leibniz Institute for Psychology (ZPID)
  *
  * Distributed under the GNU GPL v3. For full terms see the file LICENSE.
@@ -16,6 +14,17 @@ import('lib.pkp.classes.form.Form');
  *
  * @brief Class for MostViewed Plugin settings implementation
  */
+
+namespace APP\plugins\generic\mostViewed;
+
+use APP\core\Application;
+use APP\notification\Notification;
+use APP\notification\NotificationManager;
+use APP\template\TemplateManager;
+use PKP\form\Form;
+use PKP\form\validation\FormValidatorCSRF;
+use PKP\form\validation\FormValidatorPost;
+
 class MostViewedSettingsForm extends Form
 {
 	public $plugin;
@@ -92,7 +101,7 @@ class MostViewedSettingsForm extends Form
 		$notificationMgr = new NotificationManager();
 		$notificationMgr->createTrivialNotification(
 			Application::get()->getRequest()->getUser()->getId(),
-			NOTIFICATION_TYPE_SUCCESS,
+			Notification::NOTIFICATION_TYPE_SUCCESS,
 			['contents' => __('common.changesSaved')]
 		);
 
