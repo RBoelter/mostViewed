@@ -10,6 +10,7 @@
  * Distributed under the GNU GPL v3. For full terms see the file LICENSE.
  *
  * @class MostViewedSettingsForm
+ *
  * @ingroup plugins_generic_mostViewed
  *
  * @brief Class for MostViewed Plugin settings implementation
@@ -28,84 +29,86 @@ use PKP\form\validation\FormValidatorPost;
 
 class MostViewedSettingsForm extends Form
 {
-	/**
-	 * @copydoc Form::__construct
-	 */
-	public function __construct(public MostViewedPlugin $plugin)
-	{
-		parent::__construct($plugin->getTemplateResource('settings.tpl'));
-		$this->plugin = $plugin;
-		$this->addCheck(new FormValidatorPost($this));
-		$this->addCheck(new FormValidatorCSRF($this));
-	}
+    /**
+     * @copydoc Form::__construct
+     */
+    public function __construct(public MostViewedPlugin $plugin)
+    {
+        parent::__construct($plugin->getTemplateResource('settings.tpl'));
+        $this->plugin = $plugin;
+        $this->addCheck(new FormValidatorPost($this));
+        $this->addCheck(new FormValidatorCSRF($this));
+    }
 
-	/**
-	 * @copydoc Form::initData
-	 */
-	public function initData(): void
-	{
-		$contextId = Application::get()->getRequest()->getContext()->getId();
-		$data = $this->plugin->getSetting($contextId, 'settings');
-		if (strlen($data ?? '')) {
-			try {
-				$data = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
-				$this->setData('mostViewedTitle', $data['title']);
-				$this->setData('mostViewedDays', $data['days']);
-				$this->setData('mostViewedAmount', $data['amount']);
-				$this->setData('mostViewedYears', $data['years']);
-				$this->setData('mostViewedPosition', $data['position']);
-			} catch (Exception $e) {
-				error_log($e);
-			}
-		}
-		parent::initData();
-	}
+    /**
+     * @copydoc Form::initData
+     */
+    public function initData(): void
+    {
+        $contextId = Application::get()->getRequest()->getContext()->getId();
+        $data = $this->plugin->getSetting($contextId, 'settings');
+        if (strlen($data ?? '')) {
+            try {
+                $data = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+                $this->setData('mostViewedTitle', $data['title']);
+                $this->setData('mostViewedDays', $data['days']);
+                $this->setData('mostViewedAmount', $data['amount']);
+                $this->setData('mostViewedYears', $data['years']);
+                $this->setData('mostViewedPosition', $data['position']);
+            } catch (Exception $e) {
+                error_log($e);
+            }
+        }
+        parent::initData();
+    }
 
-	/**
-	 * @copydoc Form::readInputData
-	 */
-	public function readInputData(): void
-	{
-		$this->readUserVars(['mostViewedTitle', 'mostViewedDays', 'mostViewedAmount', 'mostViewedYears', 'mostViewedPosition']);
-		parent::readInputData();
-	}
+    /**
+     * @copydoc Form::readInputData
+     */
+    public function readInputData(): void
+    {
+        $this->readUserVars(['mostViewedTitle', 'mostViewedDays', 'mostViewedAmount', 'mostViewedYears', 'mostViewedPosition']);
+        parent::readInputData();
+    }
 
-	/**
-	 * @copydoc Form::fetch
-	 */
-	public function fetch($request, $template = null, $display = false): string
-	{
-		$templateMgr = TemplateManager::getManager($request);
-		$templateMgr->assign('pluginName', $this->plugin->getName());
+    /**
+     * @copydoc Form::fetch
+     *
+     * @param null|mixed $template
+     */
+    public function fetch($request, $template = null, $display = false): string
+    {
+        $templateMgr = TemplateManager::getManager($request);
+        $templateMgr->assign('pluginName', $this->plugin->getName());
 
-		return parent::fetch($request, $template, $display);
-	}
+        return parent::fetch($request, $template, $display);
+    }
 
-	/**
-	 * @copydoc Form::execute
-	 */
-	public function execute(...$functionArgs): mixed
-	{
-		$contextId = Application::get()->getRequest()->getContext()->getId();
-		$data = [
-			"title" => $this->getData('mostViewedTitle'),
-			"days" => $this->getData('mostViewedDays'),
-			"amount" => $this->getData('mostViewedAmount'),
-			"years" => $this->getData('mostViewedYears'),
-			"position" => $this->getData('mostViewedPosition'),
-		];
-		$this->plugin->updateSetting($contextId, 'settings', json_encode($data));
-		$handler = new MostViewedHandler();
-		if (ctype_digit($data['days']) && ctype_digit($data['amount']) && ($data['years'] == '' || ctype_digit($data['years']))) {
-			$handler->saveMetricsToPluginSettings($this->plugin, $contextId, intval($data['days']), intval($data['amount']), intval($data['years']));
-		}
-		$notificationMgr = new NotificationManager();
-		$notificationMgr->createTrivialNotification(
-			Application::get()->getRequest()->getUser()->getId(),
-			Notification::NOTIFICATION_TYPE_SUCCESS,
-			['contents' => __('common.changesSaved')]
-		);
+    /**
+     * @copydoc Form::execute
+     */
+    public function execute(...$functionArgs): mixed
+    {
+        $contextId = Application::get()->getRequest()->getContext()->getId();
+        $data = [
+            'title' => $this->getData('mostViewedTitle'),
+            'days' => $this->getData('mostViewedDays'),
+            'amount' => $this->getData('mostViewedAmount'),
+            'years' => $this->getData('mostViewedYears'),
+            'position' => $this->getData('mostViewedPosition'),
+        ];
+        $this->plugin->updateSetting($contextId, 'settings', json_encode($data));
+        $handler = new MostViewedHandler();
+        if (ctype_digit($data['days']) && ctype_digit($data['amount']) && ($data['years'] == '' || ctype_digit($data['years']))) {
+            $handler->saveMetricsToPluginSettings($this->plugin, $contextId, intval($data['days']), intval($data['amount']), intval($data['years']));
+        }
+        $notificationMgr = new NotificationManager();
+        $notificationMgr->createTrivialNotification(
+            Application::get()->getRequest()->getUser()->getId(),
+            Notification::NOTIFICATION_TYPE_SUCCESS,
+            ['contents' => __('common.changesSaved')]
+        );
 
-		return parent::execute(...$functionArgs);
-	}
+        return parent::execute(...$functionArgs);
+    }
 }
