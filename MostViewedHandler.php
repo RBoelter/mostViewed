@@ -19,7 +19,7 @@ namespace APP\plugins\generic\mostViewed;
 
 use APP\core\Application;
 use APP\core\Services;
-use APP\statistics\StatisticsHelper;
+use APP\facades\Repo;
 use DateTime;
 use PKP\plugins\PluginRegistry;
 use PKP\scheduledTask\ScheduledTask;
@@ -37,7 +37,6 @@ class MostViewedHandler extends ScheduledTask
 	{
 		return __('admin.scheduledTask.mostViewed');
 	}
-
 
 	/**
 	 * This function is called via cron job or acron plugin.
@@ -105,10 +104,9 @@ class MostViewedHandler extends ScheduledTask
 		$range = $range + 1;
 		$dateStart = date('Y-m-d', strtotime($dayString));
 		$currentDate = date('Y-m-d');
-		$statsService = Services::get('stats');
-		$topSubmissions = $statsService->getOrderedObjects(
-			StatisticsHelper::STATISTICS_DIMENSION_SUBMISSION_ID,
-			StatisticsHelper::STATISTICS_ORDER_DESC,
+		/** @var \APP\services\StatsPublicationService $statsService */
+		$statsService = Services::get('publicationStats');
+		$topSubmissions = $statsService->getTotals(
 			[
 				'contextIds' => [$contextId],
 				'dateEnd' => $currentDate,
@@ -118,23 +116,23 @@ class MostViewedHandler extends ScheduledTask
 			]
 		);
 		$articles = array();
-		$cc = 1;
-		$submissionService = Services::get('submission');
+		$count = 1;
 		foreach ($topSubmissions as $topSubmission) {
-			$submissionId = $topSubmission['id'];
-			$submission = $submissionService->get($submissionId);
-			if (isset($maxYearsBack) && $submission->getDatePublished() < $maxYearsBack) {
+			$submissionId = $topSubmission->submission_id;
+			$submission = Repo::submission()->get($submissionId);
+			$publication = $submission->getCurrentPublication();
+			if (!$publication || (isset($maxYearsBack) && $publication->getData('datePublished') < $maxYearsBack)) {
 				continue;
 			}
-			$publication = $submission->getCurrentPublication();
+
 			$articles[$submissionId] = [
 				'articleId' => $submissionId,
 				'articleTitle' => $publication->getLocalizedTitle(),
-				'articleSubtitle' => $publication->getLocalizedData('subtitle', $submission->getLocale()),
+				'articleSubtitle' => $publication->getLocalizedData('subtitle', $submission->getData('locale')),
 				'articleAuthor' => $publication->getShortAuthorString(),
-				'metric' => $topSubmission['total']
+				'metric' => $topSubmission->metric
 			];
-			if (++$cc >= $range) {
+			if (++$count >= $range) {
 				break;
 			}
 		}

@@ -1,9 +1,9 @@
 {if $mostReadPosition}
 	<script>
 		document.addEventListener("DOMContentLoaded", function () {
-			let mv_div = document.querySelector('.most-viewed');
-			mv_div.parentElement.append(mv_div);
-			mv_div.style.display = 'block';
+			let mvDiv = document.querySelector('.most-viewed');
+			mvDiv.parentElement.append(mvDiv);
+			mvDiv.style.display = 'block';
 		});
 	</script>
 	<style>

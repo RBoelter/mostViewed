@@ -77,19 +77,16 @@ class MostViewedPlugin extends GenericPlugin
 	public function mostViewedContent(string $hookName, array $args): bool
 	{
 		/** @var TemplateManager $smarty */
-		$smarty = $args[1];
-		$output =& $args[2];
+		[, $smarty, &$output] = $args;
 		$request = Application::get()->getRequest();
 		$context = $request->getContext();
 		$contextId = ($context && $context->getId()) ? $context->getId() : Application::CONTEXT_SITE;
 		$smarty->assign('mostReadArticles', json_decode($this->getSetting($contextId, 'articles'), true));
 		$settings = json_decode($this->getSetting($contextId, 'settings'), true);
-		if (is_array($settings)) {
-			$smarty->assign([
-				'mostReadHeadline', $settings['title'],
-				'mostReadPosition', $settings['position']
-			]);
-		}
+		$smarty->assign([
+			'mostReadHeadline' => $settings['title'] ?? null,
+			'mostReadPosition' => $settings['position'] ?? null
+		]);
 		$output .= $smarty->fetch($this->getTemplateResource('mostViewed.tpl'));
 		return Hook::CONTINUE;
 	}
