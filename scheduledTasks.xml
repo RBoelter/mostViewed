@@ -3,7 +3,7 @@
 <!DOCTYPE scheduled_tasks SYSTEM "../../../lib/pkp/dtd/scheduledTasks.dtd">
 
 <scheduled_tasks>
-	<task class="plugins.generic.mostViewed.MostViewedHandler">
+	<task class="APP\plugins\generic\mostViewed\MostViewedHandler">
 		<descr>Extract transform and load usage statistics data into plugin settings.</descr>
 	</task>
 </scheduled_tasks>
