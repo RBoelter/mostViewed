@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file MostViewedHandler.inc.php
+ * @file MostViewedHandler.php
  *
  * Copyright (c) 2014-2023 Simon Fraser University
  * Copyright (c) 2003-2023 John Willinsky
