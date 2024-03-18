@@ -1,0 +1,58 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-01-21T13:41:46+00:00\n"
+"PO-Revision-Date: 2024-03-18 15:50+0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+
+msgid "admin.scheduledTask.mostViewed"
+msgstr "Más consultados"
+
+msgid "plugins.generic.most.viewed.title"
+msgstr "Contenidos más consultados"
+
+msgid "plugins.generic.most.viewed.desc"
+msgstr "Mostrar los contenidos más visitados y descargados en la página principal de la revista."
+
+msgid "plugins.generic.most.viewed.headline"
+msgstr "Contenidos más consultados"
+
+msgid "plugins.generic.most.viewed.head"
+msgstr "Encabezado de la sección"
+
+msgid "plugins.generic.most.viewed.head.desc"
+msgstr "Este es el campo para el título que encabeza la sección de los contenidos más consultados. Para que el sistema despliegue el título \"Contenidos más consultados\", deje este campo en blanco."
+
+msgid "plugins.generic.most.viewed.days"
+msgstr "Cantidad de días"
+
+msgid "plugins.generic.most.viewed.days.desc"
+msgstr "Incluye las visitas y descargas realizadas durante la cantidad de días indicada. Por ejemplo, ingrese 30 para obtener los contenidos más consultados durante los últimos treinta días."
+
+msgid "plugins.generic.most.viewed.amount"
+msgstr "Cantidad de contenidos"
+
+msgid "plugins.generic.most.viewed.amount.desc"
+msgstr "Cantidad de contenidos que se deben visualizar."
+
+msgid "plugins.generic.most.viewed.years"
+msgstr "Excluir artículos antiguos"
+
+msgid "plugins.generic.most.viewed.years.desc"
+msgstr "Puede excluir artículos que hayan sido publicados hace más de determinado tiempo en años. Por ejemplo, ingrese 2 si solo desea incluir los artículos que se publicaron en los últimos dos años. Deje este campo en blanco para incluir todos los artículos de la revista."
+
+msgid "plugins.generic.most.viewed.position"
+msgstr "Lugar de visualización"
+
+msgid "plugins.generic.most.viewed.position.desc"
+msgstr "Si activa esta opción, el plugin intentará mostrar la sección de contenidos más consultados en la parte inferior de la página principal de la revista. Cabe la posibilidad de que esto no funcione en todos los temas."
+
+msgid "plugins.generic.most.viewed.position.check"
+msgstr "Intentar mover la sección de contenidos más consultados a la parte inferior de la página principal de la revista."
