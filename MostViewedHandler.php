@@ -47,10 +47,7 @@ class MostViewedHandler extends ScheduledTask
     public function executeActions(): bool
     {
         /** @var MostViewedPlugin $plugin */
-        $plugin = PluginRegistry::getPlugin('generic', 'mostviewedplugin');
-        if (!$plugin->getEnabled()) {
-            return false;
-        }
+        $plugin = PluginRegistry::loadPlugin('generic', 'mostviewed');
         $contextDao = Application::getContextDAO();
         foreach ($contextDao->getAll()->toIterator() as $context) {
             if (!$plugin->getEnabled($context->getId())) {
